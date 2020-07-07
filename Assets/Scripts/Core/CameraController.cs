@@ -1,23 +1,31 @@
 ﻿using UnityEngine;
 
-public class CameraController : MonoBehaviour
+namespace ID.Core
 {
-    [SerializeField] Transform player = null;
-    [SerializeField] float smooth = 0.125f;
-    [SerializeField] float verticalOffset = 0;
-    [SerializeField] float lookAtOffset = 0;
-
-    private void LateUpdate()
+    public class CameraController : MonoBehaviour
     {
-        if (!player)
+        [SerializeField] private Transform player = null;
+        [SerializeField] private float smooth = 0.125f;
+        [SerializeField] private float verticalOffset = 0;
+        [SerializeField] private float lookAtOffset = 0;
+
+        private void Start()
         {
-            Debug.LogError("Please Assign a Player Transform");
-            return;
+            if (!player)
+                player = GameObject.Find("Player").transform;
         }
-        float smoothX = Mathf.Lerp(transform.position.x, player.position.x, smooth * Time.deltaTime);
-        float smoothY = Mathf.Lerp(transform.position.y, player.position.y + verticalOffset, smooth * Time.deltaTime);
-        transform.position = new Vector3(smoothX, smoothY, transform.position.z);
-        var lookAtPosition = new Vector3(player.position.x, player.position.y + lookAtOffset, player.position.z);
-        transform.LookAt(lookAtPosition);
+
+        private void LateUpdate()
+        {
+            if (!player) return;
+            var position = transform.position;
+            var position1 = player.position;
+            var smoothX = Mathf.Lerp(position.x, position1.x, smooth * Time.deltaTime);
+            var smoothY = Mathf.Lerp(position.y, position1.y + verticalOffset, smooth * Time.deltaTime);
+            position = new Vector3(smoothX, smoothY, position.z);
+            transform.position = position;
+            var lookAtPosition = new Vector3(position1.x, position1.y + lookAtOffset, position1.z);
+            transform.LookAt(lookAtPosition);
+        }
     }
 }

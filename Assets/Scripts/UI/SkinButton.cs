@@ -1,37 +1,40 @@
 ﻿using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
-public class SkinButton : MonoBehaviour, IPointerClickHandler, IPointerExitHandler, IPointerEnterHandler
+namespace ID.UI
 {
-    public SkinType type;
-    [SerializeField] Material material = null;
-    [SerializeField] Sprite miniature = null;
-    SkinManager manager = null;
-    public Image overlay = null;
-
-    private void Start()
+    public class SkinButton : MonoBehaviour, IPointerClickHandler, IPointerExitHandler, IPointerEnterHandler
     {
-        manager = FindObjectOfType<SkinManager>();
-        var images = GetComponentsInChildren<Image>();
-        images[0].sprite = miniature;
-        overlay = images[1];
-        manager.Subscribe(this);
-    }
+        public SkinType type;
+        [SerializeField] private Material material = null;
+        [SerializeField] private Sprite miniature = null;
+        private SkinManager _manager = null;
+        public Image overlay = null;
 
-    public void OnPointerEnter(PointerEventData eventData)
-    {
-        manager.OnButtonEnter(this);
-    }
+        private void Start()
+        {
+            _manager = FindObjectOfType<SkinManager>();
+            var images = GetComponentsInChildren<Image>();
+            images[0].sprite = miniature;
+            overlay = images[1];
+            _manager.Subscribe(this);
+        }
 
-    public void OnPointerExit(PointerEventData eventData)
-    {
-        manager.OnButtonExit(this);
-    }
+        public void OnPointerEnter(PointerEventData eventData)
+        {
+            _manager.OnButtonEnter(this);
+        }
 
-    public void OnPointerClick(PointerEventData eventData)
-    {
-        if (material == null) return;
-        manager.OnButtonClick(this, type, material);
+        public void OnPointerExit(PointerEventData eventData)
+        {
+            _manager.OnButtonExit(this);
+        }
+
+        public void OnPointerClick(PointerEventData eventData)
+        {
+            if (material == null) return;
+            _manager.OnButtonClick(this, type, material);
+        }
     }
 }

@@ -1,9 +1,12 @@
 ﻿using UnityEngine;
 
-public class Shredder : MonoBehaviour
+namespace ID.Core
 {
-    private void OnCollisionEnter(Collision collision)
+    public class Shredder : MonoBehaviour
     {
-        collision.gameObject.SetActive(false);
+        private void OnCollisionEnter(Collision collision)
+        {
+            collision.gameObject.SetActive(false);
+        }
     }
 }

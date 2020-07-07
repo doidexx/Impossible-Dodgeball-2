@@ -1,24 +1,28 @@
-﻿using UnityEngine;
+﻿using ID.Core;
 using TMPro;
+using UnityEngine;
 
-public class TimerDisplay : MonoBehaviour
+namespace ID.UI.Displays
 {
-    TextMeshProUGUI text;
-    GameManager gameManager;
-
-    private void Start()
+    public class TimerDisplay : MonoBehaviour
     {
-        text = GetComponent<TextMeshProUGUI>();
-        gameManager = FindObjectOfType<GameManager>();
-    }
+        private TextMeshProUGUI _text;
+        private GameManager _gameManager;
 
-    private void Update()
-    {
-        var time = gameManager.getRoundTimer;
-        if (time == 0 || time == 10)
-            text.enabled = false;
-        else
-            text.enabled = true;
-        text.text = string.Format("{0:0}", time);
+        private void Start()
+        {
+            _text = GetComponent<TextMeshProUGUI>();
+            _gameManager = FindObjectOfType<GameManager>();
+        }
+
+        private void Update()
+        {
+            var time = _gameManager.getRoundTimer;
+            if (time <= 0.1f || time >= 10)
+                _text.enabled = false;
+            else
+                _text.enabled = true;
+            _text.text = $"{time:0}";
+        }
     }
 }

@@ -1,114 +1,117 @@
 ﻿using UnityEngine;
 
-public class GameManager : MonoBehaviour
+namespace ID.Core
 {
-    [SerializeField] float timeBeforeNextRound = 10;
-    float roundTimer = 10;
-    public float getRoundTimer { get { return roundTimer; } }
-    [SerializeField] float timeBeforeGameOver = 3;
-    float gameoverTimer = 0;
-
-    int score = 0;
-    int round = 0;
-    int scoreGoal = 1;
-    public int getScore { get { return score; } }
-    public int getRound { get { return round; } }
-
-    public bool isPlayerHit = false;
-    private bool hasWon = false;
-
-    BallSpawner ballSpawner;
-
-    private void Start()
+    public class GameManager : MonoBehaviour
     {
-        roundTimer = timeBeforeNextRound;
-        ballSpawner = GetComponent<BallSpawner>();
-    }
+        [SerializeField] private float timeBeforeNextRound = 10;
+        private float _roundTimer = 10;
+        public float getRoundTimer => _roundTimer;
+        [SerializeField] private float timeBeforeGameOver = 3;
+        private float _gameoverTimer = 0;
 
-    public void Update()
-    {
-        if (hasWon)
-            RoundWon();
-        if (isPlayerHit)
-            RoundLost();
-    }
+        private int _score = 0;
+        private int _round = 0;
+        private int _scoreGoal = 1;
+        public int getScore => _score;
+        public int getRound => _round;
 
-    private void StartNewRound()
-    {
-        round++;
-        scoreGoal = round * UnityEngine.Random.Range(20, 45);
-        ballSpawner.SetAmountToSpawn(scoreGoal);
-        ballSpawner.SetCanSpawn(true);
-        Player.canMove = true;
-    }
+        public bool isPlayerHit = false;
+        private bool _hasWon = false;
 
-    public void OnHomeScreen()
-    {
-        ballSpawner.DisableActiveBalls();
-        Time.timeScale = 1;
-        ResetGame();
-        hasWon = false;
-    }
+        private BallSpawner _ballSpawner;
 
-    public void PlayAgain()
-    {
-        GetComponent<UIManager>().OpenScreen(Screen.gameplay);
-        ResetGame();
-        hasWon = true;
-    }
-
-    private void ResetGame()
-    {
-        FindObjectOfType<Player>().ResetPlayer();
-        roundTimer = timeBeforeNextRound;
-        score = 0;
-        round = 0;
-        scoreGoal = score + 1;
-        isPlayerHit = false;
-        Player.canMove = false;
-        ballSpawner.SetCanSpawn(false);
-    }
-
-    public void IncreaseScore()
-    {
-        if (isPlayerHit) return;
-        if (hasWon) return;
-        score++;
-        if (score == scoreGoal)
-            hasWon = true;
-    }
-
-    private void RoundWon()
-    {
-        roundTimer -= Time.deltaTime;
-        if (roundTimer > 5)
+        private void Start()
         {
-            Player.canMove = false;
-            //Start celebration animation
-            //Start celebration FXs
+            _roundTimer = timeBeforeNextRound;
+            _ballSpawner = GetComponent<BallSpawner>();
         }
-        else if (roundTimer > 0)
+
+        public void Update()
         {
+            if (_hasWon)
+                RoundWon();
+            if (isPlayerHit)
+                RoundLost();
+        }
+
+        private void StartNewRound()
+        {
+            _round++;
+            _scoreGoal = _round * UnityEngine.Random.Range(20, 45);
+            _ballSpawner.SetAmountToSpawn(_scoreGoal);
+            _ballSpawner.SetCanSpawn(true);
             Player.canMove = true;
-            //Stop all celebration elements half way through count down
         }
-        else
+
+        public void OnHomeScreen()
         {
-            hasWon = false;
-            StartNewRound();
-            roundTimer = timeBeforeNextRound;
+            _ballSpawner.DisableActiveBalls();
+            Time.timeScale = 1;
+            ResetGame();
+            _hasWon = false;
         }
-    }
 
-    private void RoundLost()
-    {
-        gameoverTimer += Time.deltaTime;
-        if (gameoverTimer < timeBeforeGameOver) return;
+        public void PlayAgain()
+        {
+            GetComponent<UIManager>().OpenScreen(Screen.Gameplay);
+            ResetGame();
+            _hasWon = true;
+        }
 
-        FindObjectOfType<UIManager>().OpenScreen(Screen.gameOver);
-        isPlayerHit = false;
-        gameoverTimer = 0;
-        ballSpawner.SetCanSpawn(false);
+        private void ResetGame()
+        {
+            FindObjectOfType<Player>().ResetPlayer();
+            _roundTimer = timeBeforeNextRound;
+            _score = 0;
+            _round = 0;
+            _scoreGoal = _score + 1;
+            isPlayerHit = false;
+            Player.canMove = false;
+            _ballSpawner.SetCanSpawn(false);
+        }
+
+        public void IncreaseScore()
+        {
+            if (isPlayerHit) return;
+            if (_hasWon) return;
+            _score++;
+            if (_score == _scoreGoal)
+                _hasWon = true;
+        }
+
+        private void RoundWon()
+        {
+            _roundTimer -= Time.deltaTime;
+            if (_roundTimer > 5)
+            {
+                Player.canMove = false;
+                //Start celebration animation
+                //Start celebration FXs
+            }
+            else if (_roundTimer > 0)
+            {
+                Player.canMove = true;
+                //Stop all celebration elements half way through count down
+            }
+            else
+            {
+                _hasWon = false;
+                StartNewRound();
+                _roundTimer = timeBeforeNextRound;
+            }
+        }
+
+        private void RoundLost()
+        {
+            _gameoverTimer += Time.deltaTime;
+            if (_gameoverTimer < timeBeforeGameOver) return;
+
+            FindObjectOfType<UIManager>().OpenScreen(Screen.GameOver);
+            isPlayerHit = false;
+            _gameoverTimer = 0;
+            _ballSpawner.SetCanSpawn(false);
+        }
     }
 }
 

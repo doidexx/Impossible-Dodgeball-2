@@ -1,33 +1,34 @@
-﻿using UnityEngine;
+﻿using ID.Core;
+using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
 public class Ball : MonoBehaviour
 {
     [Header("Settings")]
-    [SerializeField] float launchForceMultiplier = 1f;
-    [SerializeField] float chaseForceMultiplier = 5f;
-    [SerializeField] float distanceToChasePlayer = 15f;
+    [SerializeField] private float launchForceMultiplier = 1f;
+    [SerializeField] private float chaseForceMultiplier = 5f;
+    [SerializeField] private float distanceToChasePlayer = 15f;
     [Header("Adjustments")]
-    [SerializeField] float horDirectionOffset = 4f;
-    [SerializeField] float verDirectionOffset = 4f;
+    [SerializeField] private float horDirectionOffset = 4f;
+    [SerializeField] private float verDirectionOffset = 4f;
 
-    float liveTime = 4f;
-    float timeSinceLastSpawned = 0;
+    private const float LiveTime = 4f;
+    private float _timeSinceLastSpawned = 0;
 
-    Rigidbody rigidBody;
-    Transform target;
+    private Rigidbody _rigidbody;
+    private Transform _target;
 
-    bool hasCollided = false;
+    private bool _hasCollided = false;
 
     private void OnEnable()
     {
-        target = FindObjectOfType<Player>().transform;
-        if (rigidBody == null)
-            rigidBody = GetComponent<Rigidbody>();
-        hasCollided = false;
-        rigidBody.useGravity = false;
-        rigidBody.AddForce(GetLaunchDirection() * launchForceMultiplier, ForceMode.Impulse);
-        timeSinceLastSpawned = 0;
+        _target = FindObjectOfType<Player>().transform;
+        if (_rigidbody == null)
+            _rigidbody = GetComponent<Rigidbody>();
+        _hasCollided = false;
+        _rigidbody.useGravity = false;
+        _rigidbody.AddForce(GetLaunchDirection() * launchForceMultiplier, ForceMode.Impulse);
+        _timeSinceLastSpawned = 0;
     }
 
     private void Update()
@@ -39,16 +40,17 @@ public class Ball : MonoBehaviour
     private Vector3 GetLaunchDirection()
     {
         Vector3 targetedPosition;
-        targetedPosition.x = target.position.x + (UnityEngine.Random.Range(0, horDirectionOffset) * Player.inputDirection);
-        targetedPosition.y = target.position.y + UnityEngine.Random.Range(-1, verDirectionOffset);
-        targetedPosition.z = target.position.z;
+        var position = _target.position;
+        targetedPosition.x = position.x + (UnityEngine.Random.Range(0, horDirectionOffset) * Player.inputDirection);
+        targetedPosition.y = position.y + UnityEngine.Random.Range(-1, verDirectionOffset);
+        targetedPosition.z = position.z;
         return (targetedPosition - transform.position).normalized;
     }
 
     private void ProcessLifeTime()
     {
-        timeSinceLastSpawned += Time.deltaTime;
-        if (timeSinceLastSpawned > liveTime)
+        _timeSinceLastSpawned += Time.deltaTime;
+        if (_timeSinceLastSpawned > LiveTime)
         {
             gameObject.SetActive(false);
         }
@@ -56,28 +58,28 @@ public class Ball : MonoBehaviour
 
     private void ProcessChasingState()
     {
-        rigidBody.velocity = Vector3.ClampMagnitude(rigidBody.velocity, launchForceMultiplier);
-        if (hasCollided) return;
+        _rigidbody.velocity = Vector3.ClampMagnitude(_rigidbody.velocity, launchForceMultiplier);
+        if (_hasCollided) return;
         if (IsBehindTarget()) return;
         if (GetDistanceFromPlayer() < distanceToChasePlayer)
         {
-            rigidBody.AddForce(GetTargetDirection() * chaseForceMultiplier);
+            _rigidbody.AddForce(GetTargetDirection() * chaseForceMultiplier);
         }
     }
 
     private Vector3 GetTargetDirection()
     {
-        return (target.position - transform.position).normalized;
+        return (_target.position - transform.position).normalized;
     }
 
     private bool IsBehindTarget()
     {
-        return transform.position.z < target.position.z;
+        return transform.position.z < _target.position.z;
     }
 
     private float GetDistanceFromPlayer()
     {
-        return Vector3.Distance(target.position, transform.position);
+        return Vector3.Distance(_target.position, transform.position);
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -85,13 +87,13 @@ public class Ball : MonoBehaviour
         Player player = collision.transform.GetComponentInParent<Player>();
         if (player)
             player.Hit();
-        rigidBody.useGravity = true;
-        hasCollided = true;
+        _rigidbody.useGravity = true;
+        _hasCollided = true;
     }
 
     private void OnDisable()
     {
-        rigidBody.velocity *= 0;
+        _rigidbody.velocity *= 0;
         FindObjectOfType<GameManager>().IncreaseScore();
     }
 }

@@ -1,19 +1,23 @@
-﻿using UnityEngine;
+﻿using ID.Core;
 using TMPro;
+using UnityEngine;
 
-public class ScoreDisplay : MonoBehaviour
+namespace ID.UI.Displays
 {
-    TextMeshProUGUI text;
-    GameManager gameManager;
-
-    private void Start()
+    public class ScoreDisplay : MonoBehaviour
     {
-        text = GetComponent<TextMeshProUGUI>();
-        gameManager = FindObjectOfType<GameManager>();
-    }
+        private TextMeshProUGUI _text;
+        private GameManager _gameManager;
 
-    private void Update()
-    {
-        text.text = "Score: " + gameManager.getScore;
+        private void Start()
+        {
+            _text = GetComponent<TextMeshProUGUI>();
+            _gameManager = FindObjectOfType<GameManager>();
+        }
+
+        private void Update()
+        {
+            _text.text = "Score: " + _gameManager.getScore;
+        }
     }
 }

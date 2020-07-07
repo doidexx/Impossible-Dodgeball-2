@@ -1,56 +1,59 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-public class TabManager : MonoBehaviour
+namespace ID.UI
 {
-    List<TabButton> tabButtons;
-    [SerializeField] Sprite active = null;
-    [SerializeField] Sprite hover = null;
-    [SerializeField] Sprite inactive = null;
-    TabButton selected = null;
-
-    public void Subscribe(TabButton button)
+    public class TabManager : MonoBehaviour
     {
-        if (tabButtons == null)
-            tabButtons = new List<TabButton>();
+        private List<TabButton> _tabButtons;
+        [SerializeField] private Sprite active = null;
+        [SerializeField] private Sprite hover = null;
+        [SerializeField] private Sprite inactive = null;
+        private TabButton _selected = null;
 
-        tabButtons.Add(button);
-    }
-
-    public void OnTabClick(TabButton button)
-    {
-        selected = button;
-        ResetTabButtons();
-        if (!active) return;
-        button.background.sprite = active;
-        if (button.window == null) return;
-        button.window.SetActive(true);
-    }
-
-    public void OnTabEnter(TabButton button)
-    {
-        ResetTabButtons();
-        if (!hover) return;
-        if (selected == null || selected != button)
-            button.background.sprite = hover;
-    }
-
-    public void OnTabExit(TabButton button)
-    {
-        ResetTabButtons();
-        if (!inactive) return;
-        if (selected == button) return;
-        button.background.sprite = inactive;
-    }
-
-    private void ResetTabButtons()
-    {
-        foreach (TabButton button in tabButtons)
+        public void Subscribe(TabButton button)
         {
-            if (button == selected) continue;
-            button.background.sprite = inactive;
+            if (_tabButtons == null)
+                _tabButtons = new List<TabButton>();
+
+            _tabButtons.Add(button);
+        }
+
+        public void OnTabClick(TabButton button)
+        {
+            _selected = button;
+            ResetTabButtons();
+            if (!active) return;
+            button.background.sprite = active;
             if (button.window == null) return;
-            button.window.SetActive(false);
+            button.window.SetActive(true);
+        }
+
+        public void OnTabEnter(TabButton button)
+        {
+            ResetTabButtons();
+            if (!hover) return;
+            if (_selected == null || _selected != button)
+                button.background.sprite = hover;
+        }
+
+        public void OnTabExit(TabButton button)
+        {
+            ResetTabButtons();
+            if (!inactive) return;
+            if (_selected == button) return;
+            button.background.sprite = inactive;
+        }
+
+        private void ResetTabButtons()
+        {
+            foreach (TabButton button in _tabButtons)
+            {
+                if (button == _selected) continue;
+                button.background.sprite = inactive;
+                if (button.window == null) return;
+                button.window.SetActive(false);
+            }
         }
     }
 }
