@@ -1,82 +1,133 @@
-﻿using ID.Core;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    [SerializeField] private float jumpHeight = 17f;
-    [SerializeField] private float gravity = 50f;
-    [SerializeField] private float movementSpeed = 10f;
-    private Vector3 _startingPosition;
-    private Vector3 _direction = Vector3.zero;
-    public static float inputDirection = 0;
+    [Header("Settings")]
+    public float jumpHeight = 17f;
+    public float gravityModifier = 3f;
+    public float movementSpeed = 10f;
+    public float minimumHeight = 6;
+    public int direction = 0;
+    public bool isGrounded = false;
 
-    CharacterController _characterController;
-    Rigidbody[] _ragdoll;
+    [Header("Other")]
+    public PlayerState playerState;
+    public Joystick joystick = null;
+    public GameObject model = null;
 
-    public static bool canMove = false;
-    private GameManager _gameManager;
-    private Animator _animator;
+    [Header("Abilities")]
+    public int numberOfJumps = 1;
+
+    int timesJumped = 0;
+    float verticalDirection = 0;
+    float horizontalDirection = 0;
+
+    Rigidbody rb = null;
+    Rigidbody[] ragdoll = new Rigidbody[0];
+    Animator animator = null;
 
     private void Start()
     {
-        _animator = GetComponent<Animator>();
-        _gameManager = FindObjectOfType<GameManager>();
-        _characterController = GetComponent<CharacterController>();
-        Physics.IgnoreLayerCollision(8, 9); //ignore player and ragdoll layer collision
-        Physics.IgnoreLayerCollision(8, 10); //ignore player and ball layer collision
-
-        _startingPosition = transform.position;
+        animator = GetComponent<Animator>();
+        rb = GetComponent<Rigidbody>();
         ConfigureRagdoll();
     }
 
     private void Update()
     {
         ProcessInput();
-        if (transform.position.y < -6)
+        if (transform.position.y < -minimumHeight)
             Hit();
     }
 
     private void ConfigureRagdoll()
     {
-        _ragdoll = GetComponentsInChildren<Rigidbody>();
-        foreach (Rigidbody rb in _ragdoll)
+        ragdoll = model.GetComponentsInChildren<Rigidbody>();
+        var characterJoints = GetComponentsInChildren<CharacterJoint>();
+        for (int i = 0; i < ragdoll.Length; i++)
         {
-            rb.collisionDetectionMode = CollisionDetectionMode.Continuous;
-            rb.interpolation = RigidbodyInterpolation.Interpolate;
+            ragdoll[i].isKinematic = true;
+            ragdoll[i].interpolation = RigidbodyInterpolation.Interpolate;
+            ragdoll[i].collisionDetectionMode = CollisionDetectionMode.ContinuousSpeculative;
         }
+        foreach(CharacterJoint joint in characterJoints)
+        {
+            joint.enableProjection = true;
+        }
+        Camera.main.GetComponent<CameraController>().ragdoll = ragdoll[1].transform;
     }
 
     private void ProcessInput()
     {
-        if (_gameManager.isPlayerHit) return;
-        if (!canMove) return;
-
-        inputDirection = Input.GetAxis("Horizontal");
-        _animator.SetFloat("Blend", -inputDirection * 0.66f);
-        if (_characterController.isGrounded)
+        if (isGrounded == true && playerState != PlayerState.Down)
         {
-            _direction.x = inputDirection * movementSpeed;
-            if (Input.GetButtonDown("Jump"))
-                _direction.y = jumpHeight;
+            timesJumped = 0;
+            horizontalDirection = joystick.Horizontal * movementSpeed;
+            direction = Mathf.Clamp((int)horizontalDirection, -1, 1);
+
+            if (Input.GetButtonDown("Jump")) // This is only for keyboard functionality
+            {
+                if (Input.GetKey(KeyCode.LeftShift))
+                    UITwistJump();
+                else
+                    UIJump();
+            }
         }
         else
         {
-            _direction.y -= gravity * Time.deltaTime;
+            verticalDirection += Physics.gravity.y * gravityModifier * Time.deltaTime;
         }
-        _characterController.Move(_direction * Time.deltaTime);
+        Vector3 movementDirection = new Vector3(horizontalDirection, verticalDirection, 0);
+        rb.velocity = movementDirection;
     }
 
-    public void ResetPlayer()
+    private void Jump()
     {
-        _characterController.enabled = false;
-        transform.position = _startingPosition;
-        _animator.enabled = true;
-        _characterController.enabled = true;
+        timesJumped++;
+        verticalDirection = jumpHeight;
+    }
+
+    public void UIJump()
+    {
+        if (CanJump() == false)
+            return;
+        Jump();
+    }
+
+    public void UITwistJump()
+    {
+        if (CanJump() == false || direction == 0)
+            return;
+        animator.SetBool("Twist", true);
+        Jump();
+    }
+
+    private bool CanJump()
+    {
+        return isGrounded == true && playerState != PlayerState.Down && timesJumped < numberOfJumps && animator.GetBool("Twist") == false;
     }
 
     public void Hit()
     {
-        _animator.enabled = false;
-        _gameManager.isPlayerHit = true;
+        if (playerState == PlayerState.Down)
+            return;
+        animator.enabled = false;
+        playerState = PlayerState.Down;
+        for (int i = 0; i < ragdoll.Length; i++)
+        {
+            ragdoll[i].isKinematic = false;
+        }
+    }
+
+    private void OnTriggerStay(Collider other)
+    {
+        if (other.tag == "Floor")
+            isGrounded = true;
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.tag == "Floor")
+            isGrounded = false;
     }
 }

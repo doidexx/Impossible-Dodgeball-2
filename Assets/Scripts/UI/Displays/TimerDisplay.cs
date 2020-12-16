@@ -1,28 +1,31 @@
-﻿using ID.Core;
+﻿using UnityEngine;
 using TMPro;
-using UnityEngine;
 
-namespace ID.UI.Displays
+public class TimerDisplay : MonoBehaviour
 {
-    public class TimerDisplay : MonoBehaviour
+    public GameObject lavel = null;
+
+    GameManager gameManager = null;
+    TextMeshProUGUI text = null;
+
+    private void Awake()
     {
-        private TextMeshProUGUI _text;
-        private GameManager _gameManager;
+        gameManager = FindObjectOfType<GameManager>();
+        text = GetComponent<TextMeshProUGUI>();
+    }
 
-        private void Start()
+    private void Update()
+    {
+        if (gameManager.roundTimer < 4.9 || gameManager.roundTimer == 0)
         {
-            _text = GetComponent<TextMeshProUGUI>();
-            _gameManager = FindObjectOfType<GameManager>();
+            lavel.SetActive(false);
+            text.text = "";
         }
-
-        private void Update()
+        else
         {
-            var time = _gameManager.getRoundTimer;
-            if (time <= 0.1f || time >= 10)
-                _text.enabled = false;
-            else
-                _text.enabled = true;
-            _text.text = $"{time:0}";
+            float timeInt = gameManager.timeBetweenRounds - gameManager.roundTimer;
+            text.text = timeInt.ToString("0.0");
+            lavel.SetActive(true);
         }
     }
 }

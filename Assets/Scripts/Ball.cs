@@ -1,99 +1,96 @@
-﻿using ID.Core;
-using UnityEngine;
+﻿using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
 public class Ball : MonoBehaviour
 {
     [Header("Settings")]
-    [SerializeField] private float launchForceMultiplier = 1f;
-    [SerializeField] private float chaseForceMultiplier = 5f;
-    [SerializeField] private float distanceToChasePlayer = 15f;
-    [Header("Adjustments")]
-    [SerializeField] private float horDirectionOffset = 4f;
-    [SerializeField] private float verDirectionOffset = 4f;
+    public float speed = 1;
+    public float turningSpeed = 1;
+    public float chasingDistance = 10;
+    public float lifeSpan = 5f;
+    public float targetOffset = 1.5f;
+    [Header("Progression settings")]
+    [Range(1,1.5f)]
+    public float speedRoundMultiplier = 1.2f;
+    [Range(1,1.5f)]
+    public float turningSpeedMultiplier = 1.2f;
+    public float maxSpeed = 60;
+    public float maxTurningSpeed = 8;
 
-    private const float LiveTime = 4f;
-    private float _timeSinceLastSpawned = 0;
+    Transform target = null;
+    Rigidbody rb = null;
+    GameManager gameManager = null;
+    bool hasCollide = false;
+    float lifeTime = Mathf.Infinity;
 
-    private Rigidbody _rigidbody;
-    private Transform _target;
-
-    private bool _hasCollided = false;
-
-    private void OnEnable()
+    private void Awake()
     {
-        _target = FindObjectOfType<Player>().transform;
-        if (_rigidbody == null)
-            _rigidbody = GetComponent<Rigidbody>();
-        _hasCollided = false;
-        _rigidbody.useGravity = false;
-        _rigidbody.AddForce(GetLaunchDirection() * launchForceMultiplier, ForceMode.Impulse);
-        _timeSinceLastSpawned = 0;
+        target = GameObject.FindWithTag("Ragdoll").transform;
+        rb = GetComponent<Rigidbody>();
+        gameManager = FindObjectOfType<GameManager>();
+        gameObject.SetActive(false);
     }
 
-    private void Update()
+    public void Update()
     {
-        ProcessLifeTime();
-        ProcessChasingState();
+        if (CanChaseTarget())
+            rb.velocity = GetSmoothChaseDirection() * speed;
+        LifeTime();
     }
 
-    private Vector3 GetLaunchDirection()
+    private void LifeTime()
     {
-        Vector3 targetedPosition;
-        var position = _target.position;
-        targetedPosition.x = position.x + (UnityEngine.Random.Range(0, horDirectionOffset) * Player.inputDirection);
-        targetedPosition.y = position.y + UnityEngine.Random.Range(-1, verDirectionOffset);
-        targetedPosition.z = position.z;
-        return (targetedPosition - transform.position).normalized;
-    }
-
-    private void ProcessLifeTime()
-    {
-        _timeSinceLastSpawned += Time.deltaTime;
-        if (_timeSinceLastSpawned > LiveTime)
-        {
+        lifeTime += Time.deltaTime;
+        if (lifeTime > lifeSpan)
             gameObject.SetActive(false);
-        }
     }
 
-    private void ProcessChasingState()
+    public void IncreaseSpeed()
     {
-        _rigidbody.velocity = Vector3.ClampMagnitude(_rigidbody.velocity, launchForceMultiplier);
-        if (_hasCollided) return;
-        if (IsBehindTarget()) return;
-        if (GetDistanceFromPlayer() < distanceToChasePlayer)
-        {
-            _rigidbody.AddForce(GetTargetDirection() * chaseForceMultiplier);
-        }
+        speed = Mathf.Min(maxSpeed, speed * gameManager.round * speedRoundMultiplier);
+        turningSpeed = Mathf.Min(maxTurningSpeed, turningSpeed * gameManager.round * turningSpeedMultiplier);    
     }
 
-    private Vector3 GetTargetDirection()
+    private Vector3 GetSmoothChaseDirection()
     {
-        return (_target.position - transform.position).normalized;
+        return Vector3.Lerp(rb.velocity.normalized, GetDirection(), turningSpeed * Time.deltaTime);
     }
 
-    private bool IsBehindTarget()
+    private bool CanChaseTarget()
     {
-        return transform.position.z < _target.position.z;
+        var inDistance = Vector3.Distance(target.position, transform.position) < chasingDistance;
+        var behindPlayer = transform.position.z > target.position.z;
+        return inDistance && behindPlayer && hasCollide == false;
     }
 
-    private float GetDistanceFromPlayer()
+    private Vector3 GetDirection()
     {
-        return Vector3.Distance(_target.position, transform.position);
+        Vector3 targetOffsetPosition = target.position + new Vector3(0, targetOffset, 0);
+        return (targetOffsetPosition - transform.position).normalized;
     }
 
     private void OnCollisionEnter(Collision collision)
     {
-        Player player = collision.transform.GetComponentInParent<Player>();
-        if (player)
-            player.Hit();
-        _rigidbody.useGravity = true;
-        _hasCollided = true;
+        print(collision.transform.tag);
+        hasCollide = true;
+        rb.useGravity = true;
+        if (collision.transform.tag == "Ragdoll")
+        {
+            FindObjectOfType<Player>().Hit();
+        }
+    }
+
+    public void Launch()
+    {
+        rb.velocity = GetDirection() * speed;
     }
 
     private void OnDisable()
     {
-        _rigidbody.velocity *= 0;
-        FindObjectOfType<GameManager>().IncreaseScore();
+        hasCollide = false;
+        rb.useGravity = false;
+        gameManager.IncreaseScore();
+        lifeTime = 0;
     }
 }
+

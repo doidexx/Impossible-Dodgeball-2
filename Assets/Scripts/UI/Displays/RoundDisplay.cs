@@ -1,23 +1,21 @@
-﻿using ID.Core;
-using TMPro;
+﻿using TMPro;
 using UnityEngine;
 
-namespace ID.UI.Displays
+public class RoundDisplay : MonoBehaviour
 {
-    public class RoundDisplay : MonoBehaviour
+    public string initialMessage = "";
+
+    GameManager gameManager = null;
+    TextMeshProUGUI text = null;
+
+    private void Awake()
     {
-        private TextMeshProUGUI _text;
-        private GameManager _gameManager;
+        gameManager = FindObjectOfType<GameManager>();
+        text = GetComponent<TextMeshProUGUI>();
+    }
 
-        private void Start()
-        {
-            _text = GetComponent<TextMeshProUGUI>();
-            _gameManager = FindObjectOfType<GameManager>();
-        }
-
-        private void Update()
-        {
-            _text.text = "Round: " + _gameManager.getRound;
-        }
+    private void Update()
+    {
+        text.text = initialMessage + gameManager.round.ToString("0");
     }
 }

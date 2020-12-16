@@ -1,117 +1,109 @@
 ﻿using UnityEngine;
 
-namespace ID.Core
+public class GameManager : MonoBehaviour
 {
-    public class GameManager : MonoBehaviour
+    [Header("Settings")]
+    public float timeBetweenRounds = 15f;
+    public float timeBeforeGameover = 3f;
+    [Header("Scores")]
+    public int score = 0;
+    public int round = 0;
+    [Header("Time Enlapsed")]
+    public float roundTimer = Mathf.Infinity;
+    [Header("States")]
+    bool waitingForRound = true;
+    [Header("Player Model Control")]
+    public ModelControl[] models = null;
+
+    float gameoverTimer = 0;
+    int maxScore = 0;
+
+    Player player = null;
+    BallSpawner ballSpawner = null;
+    UIManager uiManager = null;
+
+    private void Awake()
     {
-        [SerializeField] private float timeBeforeNextRound = 10;
-        private float _roundTimer = 10;
-        public float getRoundTimer => _roundTimer;
-        [SerializeField] private float timeBeforeGameOver = 3;
-        private float _gameoverTimer = 0;
+        player = FindObjectOfType<Player>();
+        ballSpawner = FindObjectOfType<BallSpawner>();
+        uiManager = FindObjectOfType<UIManager>();
+        roundTimer = 0;
+        ChangeAspects();
+    }
 
-        private int _score = 0;
-        private int _round = 0;
-        private int _scoreGoal = 1;
-        public int getScore => _score;
-        public int getRound => _round;
+    public void Update()
+    {
+        waitingForRound = roundTimer < timeBetweenRounds;
+        if (waitingForRound == false && MaxScoreReached())
+            NextRound();
+        else if (MaxScoreReached())
+            roundTimer = Mathf.Max(0, roundTimer += Time.deltaTime);
 
-        public bool isPlayerHit = false;
-        private bool _hasWon = false;
+        if (player.playerState == PlayerState.Down)
+            RoundLost();
+    }
 
-        private BallSpawner _ballSpawner;
+    private bool MaxScoreReached()
+    {
+        return score == maxScore;
+    }
 
-        private void Start()
+    private void NextRound()
+    {
+        round++;
+        roundTimer = 0;
+        maxScore += round * Random.Range(5, 10);
+        ballSpawner.IncreaseAmountTo(maxScore);
+        ballSpawner.IncreaseSpeed();
+    }
+
+    public void IncreaseScore()
+    {
+        if (round == 0 || player.playerState == PlayerState.Down)
+            return;
+        score++;
+    }
+
+    private void RoundLost()
+    {
+        gameoverTimer += Time.deltaTime;
+        if (gameoverTimer < timeBeforeGameover)
+            return;
+        gameoverTimer = 0;
+        FindObjectOfType<DataHolder>().SaveData();
+        uiManager.LoadScene("Game Over");
+    }
+
+    private void ChangeAspects()
+    {
+        var holder = FindObjectOfType<DataHolder>();
+        var allSkins = Resources.LoadAll("Skin Materials", typeof(Material));
+        var allBalls = Resources.LoadAll("Ball Materials", typeof(Material));
+
+        foreach (ModelControl model in models)
         {
-            _roundTimer = timeBeforeNextRound;
-            _ballSpawner = GetComponent<BallSpawner>();
+            if ((int)model.modelType != holder.selectedModelId)
+                continue;
+            model.gameObject.SetActive(true);
+            player.model = model.gameObject;
+            player.GetComponent<Animator>().avatar = model.avatar;
+            break;
         }
-
-        public void Update()
+        foreach (Material skin in allSkins)
         {
-            if (_hasWon)
-                RoundWon();
-            if (isPlayerHit)
-                RoundLost();
+            if (skin.GetInstanceID() != holder.selectedMaterialId)
+                continue;
+            player.GetComponentInChildren<SkinnedMeshRenderer>().material = skin;
+            break;
         }
-
-        private void StartNewRound()
+        foreach (Material skin in allBalls)
         {
-            _round++;
-            _scoreGoal = _round * UnityEngine.Random.Range(20, 45);
-            _ballSpawner.SetAmountToSpawn(_scoreGoal);
-            _ballSpawner.SetCanSpawn(true);
-            Player.canMove = true;
-        }
-
-        public void OnHomeScreen()
-        {
-            _ballSpawner.DisableActiveBalls();
-            Time.timeScale = 1;
-            ResetGame();
-            _hasWon = false;
-        }
-
-        public void PlayAgain()
-        {
-            GetComponent<UIManager>().OpenScreen(Screen.Gameplay);
-            ResetGame();
-            _hasWon = true;
-        }
-
-        private void ResetGame()
-        {
-            FindObjectOfType<Player>().ResetPlayer();
-            _roundTimer = timeBeforeNextRound;
-            _score = 0;
-            _round = 0;
-            _scoreGoal = _score + 1;
-            isPlayerHit = false;
-            Player.canMove = false;
-            _ballSpawner.SetCanSpawn(false);
-        }
-
-        public void IncreaseScore()
-        {
-            if (isPlayerHit) return;
-            if (_hasWon) return;
-            _score++;
-            if (_score == _scoreGoal)
-                _hasWon = true;
-        }
-
-        private void RoundWon()
-        {
-            _roundTimer -= Time.deltaTime;
-            if (_roundTimer > 5)
-            {
-                Player.canMove = false;
-                //Start celebration animation
-                //Start celebration FXs
-            }
-            else if (_roundTimer > 0)
-            {
-                Player.canMove = true;
-                //Stop all celebration elements half way through count down
-            }
-            else
-            {
-                _hasWon = false;
-                StartNewRound();
-                _roundTimer = timeBeforeNextRound;
-            }
-        }
-
-        private void RoundLost()
-        {
-            _gameoverTimer += Time.deltaTime;
-            if (_gameoverTimer < timeBeforeGameOver) return;
-
-            FindObjectOfType<UIManager>().OpenScreen(Screen.GameOver);
-            isPlayerHit = false;
-            _gameoverTimer = 0;
-            _ballSpawner.SetCanSpawn(false);
+            if (skin.GetInstanceID() != holder.selectedBallId)
+                continue;
+            ballSpawner.prefabMaterial = skin;
+            break;
         }
     }
 }
+
 
