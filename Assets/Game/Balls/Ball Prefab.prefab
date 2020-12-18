@@ -126,15 +126,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a95e71babbff504499967789e96f7709, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  baseSpeed: 25
+  baseTurningSpeed: 1.2
   speed: 30
-  turningSpeed: 1.5
+  turningSpeed: 1.21
   chasingDistance: 15
   lifeSpan: 5
   targetOffset: 1.5
-  speedRoundMultiplier: 1.1
-  turningSpeedMultiplier: 1
-  maxSpeed: 60
-  maxTurningSpeed: 10
+  speedRoundMultiplier: 0.689
+  turningSpeedMultiplier: 0.693
+  maxSpeed: 70
+  maxTurningSpeed: 7.04
 --- !u!96 &-4484152026999955193
 TrailRenderer:
   serializedVersion: 2

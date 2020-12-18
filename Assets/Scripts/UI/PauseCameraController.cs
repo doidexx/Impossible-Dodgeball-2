@@ -10,7 +10,7 @@ public class PauseCameraController : MonoBehaviour
 
     private void OnEnable()
     {
-        target = Camera.main.GetComponent<CameraController>().ragdoll;
+        target = FindObjectOfType<CameraTarget>().transform;
         transform.position = target.position + offset;
         transform.LookAt(target.position + lookAtOffset);
     }

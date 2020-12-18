@@ -8,6 +8,6 @@ public class PreviewBall : MonoBehaviour
 
     private void Update()
     {
-        transform.Rotate(Vector3.up * rotationSpeed * Time.deltaTime + Vector3.right * Random.Range(-rotationSpeed, rotationSpeed) * Time.deltaTime);
+        transform.Rotate(Vector3.up * rotationSpeed * Time.deltaTime + Vector3.right * Mathf.PingPong(-rotationSpeed, rotationSpeed) * Time.deltaTime);
     }
 }

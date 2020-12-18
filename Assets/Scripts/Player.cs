@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using Cinemachine;
 
 public class Player : MonoBehaviour
 {
@@ -50,13 +51,14 @@ public class Player : MonoBehaviour
             ragdoll[i].interpolation = RigidbodyInterpolation.Interpolate;
             ragdoll[i].collisionDetectionMode = CollisionDetectionMode.ContinuousSpeculative;
         }
-        foreach(CharacterJoint joint in characterJoints)
+        foreach (CharacterJoint joint in characterJoints)
         {
             joint.enableProjection = true;
         }
-        Camera.main.GetComponent<CameraController>().ragdoll = ragdoll[1].transform;
+        FindObjectOfType<CameraTarget>().target = ragdoll[0].transform;
     }
 
+    #region Inputs
     private void ProcessInput()
     {
         if (isGrounded == true && playerState != PlayerState.Down)
@@ -106,6 +108,7 @@ public class Player : MonoBehaviour
     {
         return isGrounded == true && playerState != PlayerState.Down && timesJumped < numberOfJumps && animator.GetBool("Twist") == false;
     }
+    #endregion
 
     public void Hit()
     {

@@ -16,7 +16,7 @@ public class TimerDisplay : MonoBehaviour
 
     private void Update()
     {
-        if (gameManager.roundTimer < 4.9 || gameManager.roundTimer == 0)
+        if (gameManager.roundTimer < gameManager.timeBetweenRounds / 2 || gameManager.roundTimer == 0)
         {
             lavel.SetActive(false);
             text.text = "";
