@@ -5,6 +5,7 @@ public class SkinButton : MonoBehaviour
 {
     public float timeForDoubleClick = 1;
     public Sprite sprite = null;
+    public Image checkMark = null;
     public Material material = null;
     public ModelType modelType;
 
@@ -23,9 +24,17 @@ public class SkinButton : MonoBehaviour
     {
         holder = FindObjectOfType<DataHolder>();
         if (holder.selectedMaterialId == material.GetInstanceID())
+        {
             SelectSkin();
+            Mark();
+            uIManager.MarkButton(this);
+        }
         else if (holder.selectedBallId == material.GetInstanceID())
+        {
             SelectBall();
+            Mark();
+            uIManager.MarkBallButton(this);
+        }
     }
 
     private void Update()
@@ -53,13 +62,25 @@ public class SkinButton : MonoBehaviour
     {
         holder.selectedMaterialId = material.GetInstanceID();
         holder.selectedModelId = (int)modelType;
-        holder.SaveData();
+        checkMark.gameObject.SetActive(true);
+        uIManager.MarkButton(this);
     }
 
     public void ApplyBallSkin()
     {
         holder.selectedBallId = material.GetInstanceID();
-        holder.SaveData();
+        checkMark.gameObject.SetActive(true);
+        uIManager.MarkBallButton(this);
+    }
+
+    public void RemoveSelection()
+    {
+        checkMark.gameObject.SetActive(false);
+    }
+
+    public void Mark()
+    {
+        checkMark.gameObject.SetActive(true);
     }
 }
 

@@ -21,6 +21,7 @@ public class BallSpawner : MonoBehaviour
     public Material prefabMaterial = null;
     public Transform pool = null;
     public int amountInPool = 30;
+    public float bouncheVolume = 1;
 
     Player player = null;
 
@@ -36,6 +37,9 @@ public class BallSpawner : MonoBehaviour
         {
             var ball = Instantiate(ballPrefab, pool);
             ball.GetComponent<Renderer>().material = prefabMaterial;
+            ball.GetComponent<TrailRenderer>().startColor = prefabMaterial.color;
+            ball.GetComponent<TrailRenderer>().endColor = prefabMaterial.color;
+            ball.GetComponent<AudioSource>().volume = bouncheVolume;
         }
     }
 

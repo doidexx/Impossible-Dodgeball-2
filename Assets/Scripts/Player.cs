@@ -10,6 +10,7 @@ public class Player : MonoBehaviour
     public float minimumHeight = 6;
     public int direction = 0;
     public bool isGrounded = false;
+    public bool playerMovementLocked = true;
 
     [Header("Other")]
     public PlayerState playerState;
@@ -18,6 +19,9 @@ public class Player : MonoBehaviour
 
     [Header("Abilities")]
     public int numberOfJumps = 1;
+
+    [Header("Audio Clips")]
+    public AudioClip[] sneakerSounds = null;
 
     int timesJumped = 0;
     float verticalDirection = 0;
@@ -58,14 +62,18 @@ public class Player : MonoBehaviour
         FindObjectOfType<CameraTarget>().target = ragdoll[0].transform;
     }
 
-    #region Inputs
+    #region Input Processing
     private void ProcessInput()
     {
-        if (isGrounded == true && playerState != PlayerState.Down)
+        if (isGrounded == true && playerState != PlayerState.Down && playerMovementLocked == false)
         {
             timesJumped = 0;
             horizontalDirection = joystick.Horizontal * movementSpeed;
+
+            var dir = direction;
             direction = Mathf.Clamp((int)horizontalDirection, -1, 1);
+            if (dir != direction)
+                PlaySneakerSound();
 
             if (Input.GetButtonDown("Jump")) // This is only for keyboard functionality
             {
@@ -122,10 +130,24 @@ public class Player : MonoBehaviour
         }
     }
 
+    private void PlaySneakerSound()
+    {
+        if (playerMovementLocked == true || playerState == PlayerState.Down)
+            return;
+        var clip = sneakerSounds[Random.Range(0, sneakerSounds.Length)];
+        GetComponent<AudioSource>().PlayOneShot(clip);
+    }
+
     private void OnTriggerStay(Collider other)
     {
         if (other.tag == "Floor")
             isGrounded = true;
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.tag == "Floor")
+            PlaySneakerSound();
     }
 
     private void OnTriggerExit(Collider other)

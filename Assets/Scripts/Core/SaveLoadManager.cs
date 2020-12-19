@@ -49,6 +49,9 @@ public class SaveData
 
     public int selectedBallId;
 
+    public float musicVolume;
+    public float SFXVolume;
+
     public SaveData(DataHolder holder)
     {
         lastScore = holder.lastScore;
@@ -59,5 +62,8 @@ public class SaveData
         selectedModelId = holder.selectedModelId;
 
         selectedBallId = holder.selectedBallId;
+
+        musicVolume = holder.musicVolume;
+        SFXVolume = holder.SFXVolume;
     }
 }

@@ -74,9 +74,10 @@ public class Ball : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        print(collision.transform.tag);
         hasCollide = true;
         rb.useGravity = true;
+        var clip = gameManager.bounceSounds[Random.Range(0, gameManager.bounceSounds.Length)];
+        GetComponent<AudioSource>().PlayOneShot(clip);
         if (collision.transform.tag == "Ragdoll")
         {
             FindObjectOfType<Player>().Hit();
@@ -90,6 +91,7 @@ public class Ball : MonoBehaviour
 
     private void OnDisable()
     {
+        GetComponent<TrailRenderer>().Clear();
         hasCollide = false;
         rb.useGravity = false;
         gameManager.IncreaseScore();

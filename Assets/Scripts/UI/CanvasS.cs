@@ -9,7 +9,8 @@ public enum CanvasName
     Pause,
     Records,
     GameOver,
-    Game
+    Game,
+    Settings
 }
 
 public class CanvasS : MonoBehaviour

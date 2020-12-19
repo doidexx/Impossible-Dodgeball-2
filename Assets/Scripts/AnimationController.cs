@@ -17,6 +17,8 @@ public class AnimationController : MonoBehaviour
 
     private void Update()
     {
+        if (player.playerMovementLocked == true)
+            return;
         var movement = player.joystick.Horizontal * runningAnimationSpeed;
         animator.SetFloat("Movement", movement);
         animator.SetBool("Moving", movement != 0);

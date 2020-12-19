@@ -10,6 +10,9 @@ public class DataHolder : MonoBehaviour
     public int selectedModelId = 0;
     public int selectedMaterialId = 0;
     public int selectedBallId = 0;
+    [Header("Settings")]
+    public float musicVolume = 0;
+    public float SFXVolume = 0;
 
     private void Awake()
     {
@@ -29,6 +32,12 @@ public class DataHolder : MonoBehaviour
             if (manager.score > highScore)
                 highScore = manager.score;
         }
+        var audioController = FindObjectOfType<AudioController>();
+        if (audioController != null)
+        {
+            musicVolume = audioController.GetComponent<AudioSource>().volume;
+            SFXVolume = audioController.SFX_Volume;
+        }
         SaveLoadManager.Save(this);
     }
 
@@ -46,5 +55,8 @@ public class DataHolder : MonoBehaviour
         selectedModelId = data.selectedModelId;
 
         selectedBallId = data.selectedBallId;
+
+        musicVolume = data.musicVolume;
+        SFXVolume = data.SFXVolume;
     }
 }

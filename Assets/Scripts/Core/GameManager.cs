@@ -14,6 +14,8 @@ public class GameManager : MonoBehaviour
     bool waitingForRound = true;
     [Header("Player Model Control")]
     public ModelControl[] models = null;
+    [Header("Audio Clips")]
+    public AudioClip[] bounceSounds = null;
 
     float gameoverTimer = 0;
     int maxScore = 0;
@@ -28,7 +30,7 @@ public class GameManager : MonoBehaviour
         ballSpawner = FindObjectOfType<BallSpawner>();
         uiManager = FindObjectOfType<UIManager>();
         roundTimer = 0;
-        ChangeAspects();
+        LoadData();
     }
 
     public void Update()
@@ -41,6 +43,8 @@ public class GameManager : MonoBehaviour
 
         if (player.playerState == PlayerState.Down)
             RoundLost();
+
+        player.playerMovementLocked = (round == 0 && roundTimer < 3f) ? true : false;
     }
 
     private bool MaxScoreReached()
@@ -74,12 +78,42 @@ public class GameManager : MonoBehaviour
         uiManager.LoadScene("Game Over");
     }
 
-    private void ChangeAspects()
+    #region Load Last Data
+    private void LoadData()
     {
         var holder = FindObjectOfType<DataHolder>();
-        var allSkins = Resources.LoadAll("Skin Materials", typeof(Material));
-        var allBalls = Resources.LoadAll("Ball Materials", typeof(Material));
+        ChangeToModel(holder);
+        ChangeSkinTo(holder);
+        ChangeBallSkinTo(holder);
+        FixVolume(holder);
+    }
 
+    private void ChangeBallSkinTo(DataHolder holder)
+    {
+        var allBalls = Resources.LoadAll("Ball Materials", typeof(Material));
+        foreach (Material skin in allBalls)
+        {
+            if (skin.GetInstanceID() != holder.selectedBallId)
+                continue;
+            ballSpawner.prefabMaterial = skin;
+            break;
+        }
+    }
+
+    private void ChangeSkinTo(DataHolder holder)
+    {
+        var allSkins = Resources.LoadAll("Skin Materials", typeof(Material));
+        foreach (Material skin in allSkins)
+        {
+            if (skin.GetInstanceID() != holder.selectedMaterialId)
+                continue;
+            player.GetComponentInChildren<SkinnedMeshRenderer>().material = skin;
+            break;
+        }
+    }
+
+    private void ChangeToModel(DataHolder holder)
+    {
         foreach (ModelControl model in models)
         {
             if ((int)model.modelType != holder.selectedModelId)
@@ -89,19 +123,12 @@ public class GameManager : MonoBehaviour
             player.GetComponent<Animator>().avatar = model.avatar;
             break;
         }
-        foreach (Material skin in allSkins)
-        {
-            if (skin.GetInstanceID() != holder.selectedMaterialId)
-                continue;
-            player.GetComponentInChildren<SkinnedMeshRenderer>().material = skin;
-            break;
-        }
-        foreach (Material skin in allBalls)
-        {
-            if (skin.GetInstanceID() != holder.selectedBallId)
-                continue;
-            ballSpawner.prefabMaterial = skin;
-            break;
-        }
     }
+
+    private void FixVolume(DataHolder holder)
+    {
+        player.GetComponent<AudioSource>().volume = holder.SFXVolume;
+        ballSpawner.bouncheVolume = holder.SFXVolume;
+    }
+    #endregion
 }
