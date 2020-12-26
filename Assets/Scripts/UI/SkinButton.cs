@@ -25,14 +25,14 @@ public class SkinButton : MonoBehaviour
         holder = FindObjectOfType<DataHolder>();
         if (holder.selectedMaterialId == material.GetInstanceID())
         {
-            SelectSkin();
             Mark();
+            SelectSkin();
             uIManager.MarkButton(this);
         }
         else if (holder.selectedBallId == material.GetInstanceID())
         {
-            SelectBall();
             Mark();
+            SelectBall();
             uIManager.MarkBallButton(this);
         }
     }

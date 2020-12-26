@@ -40,5 +40,12 @@ public class AnimationController : MonoBehaviour
     public void Landed()//Animation Event
     {
         animator.SetBool("Twist", false);
+        player.PlaySneakerSound();
+    }
+
+    public void DoneStretching()
+    {
+        player.playerMovementLocked = false;
+        animator.SetBool("Starting", false);
     }
 }

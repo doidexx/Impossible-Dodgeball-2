@@ -16,6 +16,10 @@ public class GameManager : MonoBehaviour
     public ModelControl[] models = null;
     [Header("Audio Clips")]
     public AudioClip[] bounceSounds = null;
+    [Range(0,1)]
+    public float sneakerVolumeLimiter = 0.7f;
+    [Header("Effects")]
+    public ParticleSystem confeti = null;
 
     float gameoverTimer = 0;
     int maxScore = 0;
@@ -41,10 +45,11 @@ public class GameManager : MonoBehaviour
         else if (MaxScoreReached())
             roundTimer = Mathf.Max(0, roundTimer += Time.deltaTime);
 
+        if (round > 0 && roundTimer > 0.5 && roundTimer < 3 && confeti.isPlaying == false)
+            confeti.Play();
+
         if (player.playerState == PlayerState.Down)
             RoundLost();
-
-        player.playerMovementLocked = (round == 0 && roundTimer < 3f) ? true : false;
     }
 
     private bool MaxScoreReached()
@@ -58,7 +63,7 @@ public class GameManager : MonoBehaviour
         roundTimer = 0;
         maxScore += round * Random.Range(5, 10);
         ballSpawner.IncreaseAmountTo(maxScore);
-        ballSpawner.IncreaseSpeed();
+        ballSpawner.IncreaseSpeed(round);
     }
 
     public void IncreaseScore()
@@ -85,7 +90,7 @@ public class GameManager : MonoBehaviour
         ChangeToModel(holder);
         ChangeSkinTo(holder);
         ChangeBallSkinTo(holder);
-        FixVolume(holder);
+        FixVolume(holder.SFXVolume);
     }
 
     private void ChangeBallSkinTo(DataHolder holder)
@@ -125,10 +130,10 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private void FixVolume(DataHolder holder)
+    public void FixVolume(float value)
     {
-        player.GetComponent<AudioSource>().volume = holder.SFXVolume;
-        ballSpawner.bouncheVolume = holder.SFXVolume;
+        player.GetComponent<AudioSource>().volume = value * sneakerVolumeLimiter;
+        ballSpawner.UpdateBallVolume(value);
     }
     #endregion
 }

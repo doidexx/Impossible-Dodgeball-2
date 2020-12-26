@@ -72,8 +72,13 @@ public class UIManager : MonoBehaviour
         audioController.GetComponent<AudioSource>().volume = slider.value;
     }
 
-    public void ChangeSFXVolume(Slider slider){
+    public void ChangeSFXVolume(Slider slider)
+    {
         audioController.SFX_Volume = slider.value;
+        var manager = FindObjectOfType<GameManager>();
+        if (manager == null)
+            return;
+        manager.FixVolume(slider.value);
     }
 
     public void ChangePreviewBallTo(Material material)

@@ -7,15 +7,14 @@ public class Ball : MonoBehaviour
     public float baseSpeed = 1;
     public float baseTurningSpeed = 1;
     public float speed = 1;
-    [Range(1, 1.5f)]
     public float turningSpeed = 1;
     public float chasingDistance = 10;
     public float lifeSpan = 5f;
     public float targetOffset = 1.5f;
     [Header("Progression settings")]
-    [Range(0.5f,1f)]
+    [Range(0.5f,1.5f)]
     public float speedRoundMultiplier = 1.2f;
-    [Range(0.5f,1f)]
+    [Range(0.5f,1.5f)]
     public float turningSpeedMultiplier = 1.2f;
     public float maxSpeed = 60;
     public float maxTurningSpeed = 8;
@@ -48,10 +47,11 @@ public class Ball : MonoBehaviour
             gameObject.SetActive(false);
     }
 
-    public void IncreaseSpeed()
+    public void IncreaseSpeed(int round)
     {
-        speed = Mathf.Min(maxSpeed, baseSpeed * gameManager.round * speedRoundMultiplier);
-        turningSpeed = Mathf.Min(maxTurningSpeed, baseTurningSpeed * gameManager.round * turningSpeedMultiplier);
+        float minSpeed = Mathf.Min(maxSpeed, baseSpeed * round * speedRoundMultiplier);
+        speed = Mathf.Max(baseSpeed, minSpeed);
+        turningSpeed = Mathf.Min(maxTurningSpeed, baseTurningSpeed * round * turningSpeedMultiplier);
     }
 
     private Vector3 GetSmoothChaseDirection()

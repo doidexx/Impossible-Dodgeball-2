@@ -9,8 +9,12 @@ public class BallSpawner : MonoBehaviour
     public float spawnPointDepth = 60f;
 
     [Header("Settings")]
-    [Range(0, 1)]
-    public float timeBetweenBalls = 0.3f;
+    [Range(0,0.5f)]
+    public float minimumTimeBetweenBalls = 0.3f;
+    public float maximumTimeBetweenBalls = 0.8f;
+    public float timeBetweenBalls = 0;
+    [Range(1,1.8f)]
+    public float timeBetweenBallsMultiplier = 1.2f;
     public int amountToSpawn = 0;
 
     float timeSinceLastBall = Mathf.Infinity;
@@ -21,7 +25,6 @@ public class BallSpawner : MonoBehaviour
     public Material prefabMaterial = null;
     public Transform pool = null;
     public int amountInPool = 30;
-    public float bouncheVolume = 1;
 
     Player player = null;
 
@@ -39,7 +42,6 @@ public class BallSpawner : MonoBehaviour
             ball.GetComponent<Renderer>().material = prefabMaterial;
             ball.GetComponent<TrailRenderer>().startColor = prefabMaterial.color;
             ball.GetComponent<TrailRenderer>().endColor = prefabMaterial.color;
-            ball.GetComponent<AudioSource>().volume = bouncheVolume;
         }
     }
 
@@ -77,17 +79,19 @@ public class BallSpawner : MonoBehaviour
         }
     }
 
-    public void IncreaseAmountTo(int amount) 
+    public void IncreaseAmountTo(int amount)
     {
         amountToSpawn = amount;
     }
 
-    public void IncreaseSpeed()
+    public void IncreaseSpeed(int round)
     {
         foreach (Transform ball in pool)
         {
-            ball.GetComponent<Ball>().IncreaseSpeed();
+            ball.GetComponent<Ball>().IncreaseSpeed(round);
         }
+        var minTime = Mathf.Min(maximumTimeBetweenBalls, (maximumTimeBetweenBalls / round) * timeBetweenBallsMultiplier);
+        timeBetweenBalls = Mathf.Max(minTime, minimumTimeBetweenBalls);
     }
 
     private bool HaveAllSpawned()
@@ -100,5 +104,13 @@ public class BallSpawner : MonoBehaviour
         var x = Random.Range(-spawnPointX, spawnPointX);
         var y = Random.Range(minSpawnHeight, maxSpawnHeight);
         return new Vector3(x, y, spawnPointDepth);
+    }
+
+    public void UpdateBallVolume(float value)
+    {
+        foreach (Transform ball in pool)
+        {
+            ball.GetComponent<AudioSource>().volume = value;
+        }
     }
 }

@@ -134,10 +134,10 @@ MonoBehaviour:
   chasingDistance: 15
   lifeSpan: 5
   targetOffset: 1.5
-  speedRoundMultiplier: 0.689
+  speedRoundMultiplier: 0.5
   turningSpeedMultiplier: 0.693
   maxSpeed: 70
-  maxTurningSpeed: 7.04
+  maxTurningSpeed: 8.5
 --- !u!96 &-4484152026999955193
 TrailRenderer:
   serializedVersion: 2

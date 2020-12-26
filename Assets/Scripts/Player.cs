@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using Cinemachine;
 
 public class Player : MonoBehaviour
 {
@@ -65,7 +64,7 @@ public class Player : MonoBehaviour
     #region Input Processing
     private void ProcessInput()
     {
-        if (isGrounded == true && playerState != PlayerState.Down && playerMovementLocked == false)
+        if (playerMovementLocked == false && isGrounded == true && playerState != PlayerState.Down)
         {
             timesJumped = 0;
             horizontalDirection = joystick.Horizontal * movementSpeed;
@@ -93,28 +92,31 @@ public class Player : MonoBehaviour
 
     private void Jump()
     {
+        if (playerMovementLocked == true || CanJump() ==  false)
+            return;
         timesJumped++;
         verticalDirection = jumpHeight;
     }
 
     public void UIJump()
     {
-        if (CanJump() == false)
-            return;
         Jump();
     }
 
     public void UITwistJump()
     {
-        if (CanJump() == false || direction == 0)
+        if (direction == 0 || playerMovementLocked == true)
             return;
-        animator.SetBool("Twist", true);
         Jump();
+        animator.SetBool("Twist", true);
     }
 
     private bool CanJump()
     {
-        return isGrounded == true && playerState != PlayerState.Down && timesJumped < numberOfJumps && animator.GetBool("Twist") == false;
+        var notDead = playerState != PlayerState.Down;
+        var canStillJump = timesJumped < numberOfJumps;
+        var notTwisting = animator.GetBool("Twist") == false;
+        return isGrounded == true && notDead && canStillJump && notTwisting;
     }
     #endregion
 
@@ -130,7 +132,7 @@ public class Player : MonoBehaviour
         }
     }
 
-    private void PlaySneakerSound()
+    public void PlaySneakerSound()
     {
         if (playerMovementLocked == true || playerState == PlayerState.Down)
             return;
