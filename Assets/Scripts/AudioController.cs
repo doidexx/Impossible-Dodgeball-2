@@ -14,11 +14,14 @@ public class AudioController : MonoBehaviour
     {
         var audioControllers = FindObjectsOfType<AudioController>();
         if (audioControllers.Length > 1)
+        {
             Destroy(audioControllers[1].gameObject);
+            return;
+        }
         DontDestroyOnLoad(this);
 
         GetLastVolumeSettings();
-        trackIndex= Random.Range(0, musicTracks.Length);
+        trackIndex = Random.Range(0, musicTracks.Length);
         trackName = musicTracks[trackIndex].name;
         audioSource.clip = musicTracks[trackIndex];
         audioSource.Play();
@@ -64,6 +67,4 @@ public class AudioController : MonoBehaviour
         else
             return trackIndex - 1;
     }
-
-
 }

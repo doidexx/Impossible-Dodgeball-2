@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using Cinemachine;
 
 public class UIManager : MonoBehaviour
 {
@@ -15,7 +16,17 @@ public class UIManager : MonoBehaviour
     [Header("Sliders")]
     public Slider musicSlider = null;
     public Slider SFXSlider = null;
+    [Header("Virtual Cameras")]
+    public CinemachineVirtualCamera homeVCAM = null;
+    public CinemachineDollyCart VCamCart = null;
+    public float VCamDesirePosition = 0;
+    public float timeToReachPosition = 0.125f;
+    [Header("VCam Rotations")]
+    public Vector3 VCamDesiredRotation = Vector3.zero;
+    public Vector3[] rotations = null;
 
+    float VCamPos = 0;
+    Vector3 VCamRotation = Vector3.zero;
     AudioController audioController = null;
 
     private void Start()
@@ -24,8 +35,44 @@ public class UIManager : MonoBehaviour
         if (musicSlider == null || SFXSlider == null)
             return;
         var holder = FindObjectOfType<DataHolder>();
+        LoadData(holder);
+    }
+
+    private void LoadData(DataHolder holder)
+    {
         musicSlider.value = holder.musicVolume;
         SFXSlider.value = holder.SFXVolume;
+        var ballsMats = Resources.LoadAll("Ball Materials", typeof(Material));
+        var skinsMats = Resources.LoadAll("Skin Materials", typeof(Material));
+        if (ball == null)
+            return;
+        foreach (Material ball in ballsMats)
+        {
+            if (holder.selectedBallId != ball.GetInstanceID())
+                continue;
+            ChangePreviewBallTo(ball);
+            break;
+        }
+        if (models.Length == 0)
+            return;
+        foreach (Material skin in skinsMats)
+        {
+            if (holder.selectedMaterialId != skin.GetInstanceID())
+                continue;
+            ChangePreviewSkinTo((ModelType)holder.selectedModelId, skin);
+            break;
+        }
+    }
+
+    private void Update()
+    {
+        if (homeVCAM == null)
+            return;
+        VCamPos = Mathf.Lerp(VCamPos, VCamDesirePosition, timeToReachPosition * Time.deltaTime);
+        VCamRotation = Vector3.Lerp(VCamRotation, VCamDesiredRotation, timeToReachPosition * Time.deltaTime);
+        VCamCart.m_Position = VCamPos;
+        homeVCAM.transform.position = VCamCart.transform.position;
+        homeVCAM.transform.rotation = Quaternion.Euler(VCamRotation);
     }
 
     public void LoadScene(string name)
@@ -36,9 +83,6 @@ public class UIManager : MonoBehaviour
 
     public void OpenCanvas(string name)
     {
-        if (name == CanvasName.Main.ToString() && Time.timeScale != 0)
-            FindObjectOfType<DataHolder>().SaveData();
-
         foreach (CanvasS canvas in canvasses)
         {
             if (canvas.canvasName.ToString() != name)
@@ -51,6 +95,14 @@ public class UIManager : MonoBehaviour
             Time.timeScale = 0;
         else
             Time.timeScale = 1;
+
+        if (name == CanvasName.Main.ToString())
+        {
+            FindObjectOfType<DataHolder>().SaveData();
+            MoveCameraTo(0);
+        }
+        else if (name == CanvasName.Skins.ToString())
+            FindObjectOfType<TabManager>().OpenSkinTab();
     }
 
     public void ChangePreviewSkinTo(ModelType modelType, Material material)
@@ -103,5 +155,11 @@ public class UIManager : MonoBehaviour
     public void EndGame()
     {
         Application.Quit();
+    }
+
+    public void MoveCameraTo(int unit)
+    {
+        VCamDesirePosition = unit;
+        VCamDesiredRotation = rotations[unit];
     }
 }

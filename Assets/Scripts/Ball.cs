@@ -79,9 +79,7 @@ public class Ball : MonoBehaviour
         var clip = gameManager.bounceSounds[Random.Range(0, gameManager.bounceSounds.Length)];
         GetComponent<AudioSource>().PlayOneShot(clip);
         if (collision.transform.tag == "Ragdoll")
-        {
             FindObjectOfType<Player>().Hit();
-        }
     }
 
     public void Launch()

@@ -10,7 +10,8 @@ public enum CanvasName
     Records,
     GameOver,
     Game,
-    Settings
+    Settings,
+    Info
 }
 
 public class CanvasS : MonoBehaviour

@@ -26,13 +26,11 @@ public class SkinButton : MonoBehaviour
         if (holder.selectedMaterialId == material.GetInstanceID())
         {
             Mark();
-            SelectSkin();
             uIManager.MarkButton(this);
         }
         else if (holder.selectedBallId == material.GetInstanceID())
         {
             Mark();
-            SelectBall();
             uIManager.MarkBallButton(this);
         }
     }
