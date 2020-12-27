@@ -108,15 +108,14 @@ public class Player : MonoBehaviour
         if (direction == 0 || playerMovementLocked == true)
             return;
         Jump();
-        animator.SetBool("Twist", true);
+        animator.SetTrigger("Twist");
     }
 
     private bool CanJump()
     {
         var notDead = playerState != PlayerState.Down;
         var canStillJump = timesJumped < numberOfJumps;
-        var notTwisting = animator.GetBool("Twist") == false;
-        return isGrounded == true && notDead && canStillJump && notTwisting;
+        return isGrounded == true && notDead && canStillJump;
     }
     #endregion
 

@@ -504,47 +504,47 @@ AnimatorController:
   serializedVersion: 5
   m_AnimatorParameters:
   - m_Name: Twist
-    m_Type: 4
+    m_Type: 9
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
-    m_Controller: {fileID: 9100000}
+    m_Controller: {fileID: 0}
   - m_Name: Is Grounded
     m_Type: 4
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 1
-    m_Controller: {fileID: 9100000}
+    m_Controller: {fileID: 0}
   - m_Name: Moving
     m_Type: 4
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
-    m_Controller: {fileID: 9100000}
+    m_Controller: {fileID: 0}
   - m_Name: Starting
     m_Type: 4
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 1
-    m_Controller: {fileID: 9100000}
+    m_Controller: {fileID: 0}
   - m_Name: Direction
     m_Type: 3
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
-    m_Controller: {fileID: 9100000}
+    m_Controller: {fileID: 0}
   - m_Name: Movement
     m_Type: 1
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
-    m_Controller: {fileID: 9100000}
+    m_Controller: {fileID: 0}
   - m_Name: Time In Idle
     m_Type: 1
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
-    m_Controller: {fileID: 9100000}
+    m_Controller: {fileID: 0}
   m_AnimatorLayers:
   - serializedVersion: 5
     m_Name: Base Layer
@@ -566,7 +566,7 @@ AnimatorState:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Front Twist Flip 0
-  m_Speed: 1.3
+  m_Speed: 1.5
   m_CycleOffset: 0
   m_Transitions:
   - {fileID: 255499954354607113}
@@ -626,9 +626,6 @@ AnimatorStateTransition:
   m_PrefabAsset: {fileID: 0}
   m_Name: 
   m_Conditions:
-  - m_ConditionMode: 2
-    m_ConditionEvent: Twist
-    m_EventTreshold: 0
   - m_ConditionMode: 1
     m_ConditionEvent: Is Grounded
     m_EventTreshold: 0
@@ -638,12 +635,12 @@ AnimatorStateTransition:
   m_Mute: 0
   m_IsExit: 0
   serializedVersion: 3
-  m_TransitionDuration: 0.14999998
-  m_TransitionOffset: 0
-  m_ExitTime: 0.5738929
-  m_HasExitTime: 1
+  m_TransitionDuration: 0.14999992
+  m_TransitionOffset: 0.010242465
+  m_ExitTime: 0.5453055
+  m_HasExitTime: 0
   m_HasFixedDuration: 1
-  m_InterruptionSource: 0
+  m_InterruptionSource: 2
   m_OrderedInterruption: 1
   m_CanTransitionToSelf: 1
 --- !u!1101 &1407211004966305734
@@ -742,9 +739,6 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 2
-    m_ConditionEvent: Twist
-    m_EventTreshold: 0
-  - m_ConditionMode: 2
     m_ConditionEvent: Is Grounded
     m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
@@ -755,10 +749,10 @@ AnimatorStateTransition:
   serializedVersion: 3
   m_TransitionDuration: 0.14999986
   m_TransitionOffset: 0
-  m_ExitTime: 0.57959825
+  m_ExitTime: 0.4843987
   m_HasExitTime: 1
   m_HasFixedDuration: 1
-  m_InterruptionSource: 0
+  m_InterruptionSource: 2
   m_OrderedInterruption: 1
   m_CanTransitionToSelf: 1
 --- !u!1102 &3115178294595333320
@@ -769,7 +763,7 @@ AnimatorState:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Front Twist Flip
-  m_Speed: 1.3
+  m_Speed: 1.5
   m_CycleOffset: 0
   m_Transitions:
   - {fileID: 4149717758323120793}
@@ -834,21 +828,18 @@ AnimatorStateTransition:
   - m_ConditionMode: 1
     m_ConditionEvent: Is Grounded
     m_EventTreshold: 0
-  - m_ConditionMode: 2
-    m_ConditionEvent: Twist
-    m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 6472826042466078368}
   m_Solo: 0
   m_Mute: 0
   m_IsExit: 0
   serializedVersion: 3
-  m_TransitionDuration: 0.15000004
+  m_TransitionDuration: 0.14999998
   m_TransitionOffset: 0
-  m_ExitTime: 0.5899607
-  m_HasExitTime: 1
+  m_ExitTime: 0.5410443
+  m_HasExitTime: 0
   m_HasFixedDuration: 1
-  m_InterruptionSource: 0
+  m_InterruptionSource: 2
   m_OrderedInterruption: 1
   m_CanTransitionToSelf: 1
 --- !u!1101 &4209666602166428944
@@ -1154,9 +1145,6 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 2
-    m_ConditionEvent: Twist
-    m_EventTreshold: 0
-  - m_ConditionMode: 2
     m_ConditionEvent: Is Grounded
     m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
@@ -1167,10 +1155,10 @@ AnimatorStateTransition:
   serializedVersion: 3
   m_TransitionDuration: 0.15000015
   m_TransitionOffset: 0
-  m_ExitTime: 0.5774503
+  m_ExitTime: 0.48986664
   m_HasExitTime: 1
   m_HasFixedDuration: 1
-  m_InterruptionSource: 0
+  m_InterruptionSource: 2
   m_OrderedInterruption: 1
   m_CanTransitionToSelf: 1
 --- !u!206 &8597589722682710363
