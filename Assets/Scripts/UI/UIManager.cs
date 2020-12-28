@@ -167,14 +167,20 @@ public class UIManager : MonoBehaviour
         VCamDesiredRotation = rotations[unit];
     }
 
-    public void UpdateRequirementText(bool show, string requirement)
+    public void UpdateRequirementText(bool show, bool buyable, string requirement)
     {
         requirementTextWindow.SetActive(show);
-        requirementText.text = "Reach a Score of: " + requirement;
+        requirementTextWindow.GetComponent<Button>().enabled = buyable;
+        requirementText.text = requirement;
     }
 
     public void OpenSoundCloud()
     {
         Application.OpenURL("https://soundcloud.com/comabeatss");
+    }
+
+    public void OpenStore()
+    {
+        Debug.Log("Buying a Skin");
     }
 }

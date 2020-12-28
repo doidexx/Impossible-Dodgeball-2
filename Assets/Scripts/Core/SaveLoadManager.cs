@@ -52,6 +52,9 @@ public class SaveData
     public float musicVolume;
     public float SFXVolume;
 
+    #region SkinsList
+    #endregion
+
     public SaveData(DataHolder holder)
     {
         lastScore = holder.lastScore;

@@ -148,11 +148,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   timeForDoubleClick: 1
   sprite: {fileID: 0}
+  material: {fileID: 0}
   checkMark: {fileID: 5827552406973077506}
   _lock: {fileID: 1071193876884026725}
-  material: {fileID: 0}
   modelType: 0
   unlocked: 0
+  purchasable: 0
+  scoreRequirement: 0
+  scoreRequirementText: 'Score: '
+  buyableText: 'Unlock for: 0.99$'
 --- !u!1 &7117673648581146698
 GameObject:
   m_ObjectHideFlags: 0
