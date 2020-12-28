@@ -22,7 +22,6 @@ public class GameManager : MonoBehaviour
     public ParticleSystem confeti = null;
 
     float gameoverTimer = 0;
-    int maxScore = 0;
 
     Player player = null;
     BallSpawner ballSpawner = null;
@@ -40,9 +39,9 @@ public class GameManager : MonoBehaviour
     public void Update()
     {
         waitingForRound = roundTimer < timeBetweenRounds;
-        if (waitingForRound == false && MaxScoreReached())
+        if (waitingForRound == false && ballSpawner.HaveRoundEnd())
             NextRound();
-        else if (MaxScoreReached())
+        else if (ballSpawner.HaveRoundEnd())
             roundTimer = Mathf.Max(0, roundTimer += Time.deltaTime);
 
         if (round > 0 && roundTimer > 0.5 && roundTimer < 3 && confeti.isPlaying == false)
@@ -52,25 +51,20 @@ public class GameManager : MonoBehaviour
             RoundLost();
     }
 
-    private bool MaxScoreReached()
-    {
-        return score == maxScore;
-    }
-
     private void NextRound()
     {
         round++;
         roundTimer = 0;
-        maxScore += round * Random.Range(5, 10);
-        ballSpawner.IncreaseAmountTo(maxScore);
+        var amount = round * Random.Range(5, 10);
+        ballSpawner.IncreaseAmountBy(amount);
         ballSpawner.IncreaseSpeed(round);
     }
 
-    public void IncreaseScore()
+    public void IncreaseScore(int points)
     {
         if (round == 0 || player.playerState == PlayerState.Down)
             return;
-        score++;
+        score += points;
     }
 
     private void RoundLost()

@@ -125,6 +125,11 @@ PrefabInstance:
       objectReference: {fileID: 2100000, guid: 8863f3fbb51062b488d648e558afcb86, type: 2}
     - target: {fileID: 4101586275041273610, guid: 176d6635c7a09b1488c9efac426b34a2,
         type: 3}
+      propertyPath: unlocked
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4101586275041273610, guid: 176d6635c7a09b1488c9efac426b34a2,
+        type: 3}
       propertyPath: modelType
       value: 1
       objectReference: {fileID: 0}

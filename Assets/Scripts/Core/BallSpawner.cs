@@ -9,11 +9,11 @@ public class BallSpawner : MonoBehaviour
     public float spawnPointDepth = 60f;
 
     [Header("Settings")]
-    [Range(0,0.5f)]
+    [Range(0, 0.5f)]
     public float minimumTimeBetweenBalls = 0.3f;
     public float maximumTimeBetweenBalls = 0.8f;
     public float timeBetweenBalls = 0;
-    [Range(1,1.8f)]
+    [Range(1, 1.8f)]
     public float timeBetweenBallsMultiplier = 1.2f;
     public int amountToSpawn = 0;
 
@@ -79,9 +79,9 @@ public class BallSpawner : MonoBehaviour
         }
     }
 
-    public void IncreaseAmountTo(int amount)
+    public void IncreaseAmountBy(int amount)
     {
-        amountToSpawn = amount;
+        amountToSpawn += amount;
     }
 
     public void IncreaseSpeed(int round)
@@ -97,6 +97,21 @@ public class BallSpawner : MonoBehaviour
     private bool HaveAllSpawned()
     {
         return amountSpawned == amountToSpawn;
+    }
+
+    public bool HaveRoundEnd()
+    {
+        return HaveAllSpawned() && AllBallsDisabled();
+    }
+
+    private bool AllBallsDisabled()
+    {
+        foreach (Transform ball in pool)
+        {
+            if (ball.gameObject.activeInHierarchy)
+                return false;
+        }
+        return true;
     }
 
     private Vector3 GetNewSpawnPosition()

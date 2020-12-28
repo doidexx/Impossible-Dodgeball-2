@@ -18,7 +18,11 @@ public class Ball : MonoBehaviour
     public float turningSpeedMultiplier = 1.2f;
     public float maxSpeed = 60;
     public float maxTurningSpeed = 8;
+    [Header("Point System")]
+    public int minimumPoints = 1;
+    public float distanceForExtraPoints = 10f;
 
+    float closestDistanceReached = Mathf.Infinity;
     Transform target = null;
     Rigidbody rb = null;
     GameManager gameManager = null;
@@ -38,6 +42,9 @@ public class Ball : MonoBehaviour
         if (CanChaseTarget())
             rb.velocity = GetSmoothChaseDirection() * speed;
         LifeTime();
+        
+        var distanceFromTarget = Vector3.Distance(target.position, transform.position);
+        closestDistanceReached = Mathf.Min(closestDistanceReached, distanceFromTarget);
     }
 
     private void LifeTime()
@@ -85,6 +92,7 @@ public class Ball : MonoBehaviour
     public void Launch()
     {
         rb.velocity = GetDirection() * speed;
+        closestDistanceReached = Mathf.Infinity;
     }
 
     private void OnDisable()
@@ -92,8 +100,14 @@ public class Ball : MonoBehaviour
         GetComponent<TrailRenderer>().Clear();
         hasCollide = false;
         rb.useGravity = false;
-        gameManager.IncreaseScore();
+        CalculatePoints();
         lifeTime = 0;
+    }
+
+    private void CalculatePoints()
+    {
+        int points = Mathf.Max(minimumPoints, (int)(10 - closestDistanceReached));
+        gameManager.IncreaseScore(points);
     }
 }
 

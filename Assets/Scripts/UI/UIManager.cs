@@ -2,6 +2,7 @@
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using Cinemachine;
+using TMPro;
 
 public class UIManager : MonoBehaviour
 {
@@ -24,6 +25,9 @@ public class UIManager : MonoBehaviour
     [Header("VCam Rotations")]
     public Vector3 VCamDesiredRotation = Vector3.zero;
     public Vector3[] rotations = null;
+    [Header("Requirement Text")]
+    public GameObject requirementTextWindow = null;
+    public TextMeshProUGUI requirementText = null;
 
     float VCamPos = 0;
     Vector3 VCamRotation = Vector3.zero;
@@ -161,5 +165,16 @@ public class UIManager : MonoBehaviour
     {
         VCamDesirePosition = unit;
         VCamDesiredRotation = rotations[unit];
+    }
+
+    public void UpdateRequirementText(bool show, string requirement)
+    {
+        requirementTextWindow.SetActive(show);
+        requirementText.text = "Reach a Score of: " + requirement;
+    }
+
+    public void OpenSoundCloud()
+    {
+        Application.OpenURL("https://soundcloud.com/comabeatss");
     }
 }
