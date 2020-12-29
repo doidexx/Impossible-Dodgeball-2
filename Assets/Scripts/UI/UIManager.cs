@@ -17,20 +17,7 @@ public class UIManager : MonoBehaviour
     [Header("Sliders")]
     public Slider musicSlider = null;
     public Slider SFXSlider = null;
-    [Header("Virtual Cameras")]
-    public CinemachineVirtualCamera homeVCAM = null;
-    public CinemachineDollyCart VCamCart = null;
-    public float VCamDesirePosition = 0;
-    public float timeToReachPosition = 0.125f;
-    [Header("VCam Rotations")]
-    public Vector3 VCamDesiredRotation = Vector3.zero;
-    public Vector3[] rotations = null;
-    [Header("Requirement Text")]
-    public GameObject requirementTextWindow = null;
-    public TextMeshProUGUI requirementText = null;
 
-    float VCamPos = 0;
-    Vector3 VCamRotation = Vector3.zero;
     AudioController audioController = null;
 
     private void Start()
@@ -68,17 +55,6 @@ public class UIManager : MonoBehaviour
         }
     }
 
-    private void Update()
-    {
-        if (homeVCAM == null)
-            return;
-        VCamPos = Mathf.Lerp(VCamPos, VCamDesirePosition, timeToReachPosition * Time.deltaTime);
-        VCamRotation = Vector3.Lerp(VCamRotation, VCamDesiredRotation, timeToReachPosition * Time.deltaTime);
-        VCamCart.m_Position = VCamPos;
-        homeVCAM.transform.position = VCamCart.transform.position;
-        homeVCAM.transform.rotation = Quaternion.Euler(VCamRotation);
-    }
-
     public void LoadScene(string name)
     {
         SceneManager.LoadScene(name);
@@ -103,7 +79,7 @@ public class UIManager : MonoBehaviour
         if (name == CanvasName.Main.ToString())
         {
             FindObjectOfType<DataHolder>().SaveData();
-            MoveCameraTo(0);
+            FindObjectOfType<CameraControl>().MoveCameraTo(0);
         }
         else if (name == CanvasName.Skins.ToString())
             FindObjectOfType<TabManager>().OpenSkinTab();
@@ -159,19 +135,6 @@ public class UIManager : MonoBehaviour
     public void EndGame()
     {
         Application.Quit();
-    }
-
-    public void MoveCameraTo(int unit)
-    {
-        VCamDesirePosition = unit;
-        VCamDesiredRotation = rotations[unit];
-    }
-
-    public void UpdateRequirementText(bool show, bool buyable, string requirement)
-    {
-        requirementTextWindow.SetActive(show);
-        requirementTextWindow.GetComponent<Button>().enabled = buyable;
-        requirementText.text = requirement;
     }
 
     public void OpenSoundCloud()

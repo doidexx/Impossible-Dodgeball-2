@@ -15,6 +15,7 @@ public class Player : MonoBehaviour
     public PlayerState playerState;
     public Joystick joystick = null;
     public GameObject model = null;
+    public CamerasTarget cameraTarget = null;
 
     [Header("Abilities")]
     public int numberOfJumps = 1;
@@ -58,7 +59,7 @@ public class Player : MonoBehaviour
         {
             joint.enableProjection = true;
         }
-        FindObjectOfType<CameraTarget>().target = ragdoll[0].transform;
+        cameraTarget.target = ragdoll[0].transform;
     }
 
     #region Input Processing

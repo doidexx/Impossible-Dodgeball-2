@@ -90,7 +90,7 @@ public class SkinButton : MonoBehaviour
     private void UpdateRequirementText()
     {
         var text = (purchasable) ? buyableText : scoreRequirementText;
-        uIManager.UpdateRequirementText(!unlocked, purchasable, text);
+        FindObjectOfType<RequirementDisplay>().UpdateRequirementText(!unlocked, purchasable, text);
     }
 
     public void ApplySkin()
