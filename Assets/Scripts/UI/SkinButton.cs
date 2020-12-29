@@ -31,12 +31,12 @@ public class SkinButton : MonoBehaviour
         holder = FindObjectOfType<DataHolder>();
         CheckLastActiveSkin();
 
-        CheckUnlockable(gameObject);
+        CheckUnlockable();
         _lock.gameObject.SetActive(!unlocked);
         scoreRequirementText += scoreRequirement;
     }
 
-    public void CheckUnlockable(GameObject obj)
+    private void CheckUnlockable()
     {
         unlocked = holder.IsInList(material.GetInstanceID());
         var scoreReached = holder.highScore >= scoreRequirement;
@@ -44,8 +44,6 @@ public class SkinButton : MonoBehaviour
             return;
         holder.AddToOwnedSkins(material.GetInstanceID());
         unlocked = true;
-        if (obj != gameObject)
-            obj.GetComponent<CheckNewUnlock>().newlyUnlocks.Add(sprite);
     }
 
     private void CheckLastActiveSkin()
