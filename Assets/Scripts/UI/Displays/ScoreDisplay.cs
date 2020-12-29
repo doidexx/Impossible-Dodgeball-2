@@ -7,6 +7,8 @@ public class ScoreDisplay : MonoBehaviour
 
     GameManager gameManager = null;
     TextMeshProUGUI text = null;
+    float textUpdateSpeed = 3;
+    float displayedScore = 0;
 
     private void Awake()
     {
@@ -16,6 +18,7 @@ public class ScoreDisplay : MonoBehaviour
 
     private void Update()
     {
-        text.text = initialMessage + gameManager.score.ToString("0");
+        displayedScore = Mathf.Lerp(displayedScore, gameManager.score, textUpdateSpeed * Time.deltaTime);
+        text.text = initialMessage + (int)displayedScore;
     }
 }
