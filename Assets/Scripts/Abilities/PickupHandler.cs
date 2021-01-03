@@ -16,7 +16,9 @@ public class PickupHandler : MonoBehaviour
         {
             pointsToSpawn += (int)Random.Range(pointIncreaseMinimum, pointIncreaseMaximum);
             var pickupNumber = (int)Random.Range(0, pickups.Length);
-            pickups[pickupNumber].gameObject.SetActive(true);
+            //pickups[pickupNumber].gameObject.SetActive(true);
+            pickups[0].gameObject.SetActive(true);
+            pickups[1].gameObject.SetActive(true);
         }
     }
 }

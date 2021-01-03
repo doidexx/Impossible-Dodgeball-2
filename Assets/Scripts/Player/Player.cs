@@ -22,7 +22,7 @@ public class Player : MonoBehaviour
     public bool highJump = false;
     public bool highSpeed = false;
     [Header("Abilities Objects")]
-    public Light[] lights = null;
+    public LegRings legRings = null;
     public Color highJumpColor = Color.blue;
     public Color highSpeedColor = Color.yellow;
 
@@ -51,7 +51,6 @@ public class Player : MonoBehaviour
         animator = GetComponent<Animator>();
         rb = GetComponent<Rigidbody>();
         ConfigureRagdoll();
-        lights = GetComponentsInChildren<Light>();
     }
 
     private void Update()
@@ -157,18 +156,15 @@ public class Player : MonoBehaviour
         {
             highJump = false;
             if (highSpeed)
-                TurnLights(highSpeed, highSpeedColor, highSpeedColor);
+                legRings.MakeRings(highSpeedColor, highSpeedColor, true);
             else
-                TurnLights(highJump, Color.black, Color.black);
+                legRings.MakeRings(Color.black, Color.black, false);
         }
         else if (highJumpTimer >= abilitiesTime - 4)
         {
             if (highSpeed)
                 return;
-            foreach (var light in lights)
-            {
-                light.GetComponent<Animator>().SetBool("Ending", true);
-            }
+            legRings.EndingRings();
         }
     }
 
@@ -182,18 +178,15 @@ public class Player : MonoBehaviour
         {
             highSpeed = false;
             if (highJump)
-                TurnLights(highJump, highJumpColor, highJumpColor);
+                legRings.MakeRings(highJumpColor, highJumpColor, true);
             else
-                TurnLights(highSpeed, Color.black, Color.black);
+                legRings.MakeRings(Color.black, Color.black, false);
         }
-        else if (highSpeedTimer >= abilitiesTime - 4)
+        else if (highSpeedTimer >= abilitiesTime - 3)
         {
             if (highJump)
                 return;
-            foreach (var light in lights)
-            {
-                light.GetComponent<Animator>().SetBool("Ending", true);
-            }
+            legRings.EndingRings();
         }
     }
 
@@ -202,9 +195,9 @@ public class Player : MonoBehaviour
         highJump = true;
         highJumpTimer = 0;
         if (highSpeed == true)
-            TurnLights(highJump, highJumpColor, highSpeedColor);
+            legRings.MakeRings(highSpeedColor, highJumpColor, true);
         else
-            TurnLights(highJump, highJumpColor, highJumpColor);
+            legRings.MakeRings(highJumpColor, highJumpColor, true);
     }
 
     public void ActivateHighSpeed()
@@ -212,31 +205,9 @@ public class Player : MonoBehaviour
         highSpeed = true;
         highSpeedTimer = 0;
         if (highJump == true)
-            TurnLights(highSpeed, highJumpColor, highSpeedColor);
+            legRings.MakeRings(highSpeedColor, highJumpColor, true);
         else
-            TurnLights(highSpeed, highSpeedColor, highSpeedColor);
-    }
-
-    public void TurnLights(bool value, Color color, Color secondColor)
-    {
-        var _color = new Color();
-        for (int i = 0; i < lights.Length; i++)
-        {
-            if (i == 0)
-                _color = color;
-            else
-                _color = secondColor;
-
-            var trail = lights[i].GetComponent<TrailRenderer>();
-            lights[i].enabled = value;
-            lights[i].color = _color;
-            trail.startColor = _color;
-            trail.endColor = _color;
-            trail.emitting = value;
-            if (value == false)
-                lights[i].GetComponent<Animator>().Rebind();
-        }
-        Debug.Log(color == secondColor);
+            legRings.MakeRings(highSpeedColor, highSpeedColor, true);
     }
     #endregion
 
@@ -250,7 +221,6 @@ public class Player : MonoBehaviour
         {
             ragdoll[i].isKinematic = false;
         }
-        TurnLights(false, Color.black, Color.black);
     }
 
     public void PlaySneakerSound()
