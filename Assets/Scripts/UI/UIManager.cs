@@ -1,8 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using Cinemachine;
-using TMPro;
 
 public class UIManager : MonoBehaviour
 {
@@ -19,13 +17,18 @@ public class UIManager : MonoBehaviour
     public Slider SFXSlider = null;
 
     AudioController audioController = null;
+    DataHolder holder = null;
+
+    private void Awake()
+    {
+        audioController = FindObjectOfType<AudioController>();
+        holder = FindObjectOfType<DataHolder>();
+    }
 
     private void Start()
     {
-        audioController = FindObjectOfType<AudioController>();
         if (musicSlider == null || SFXSlider == null)
             return;
-        var holder = FindObjectOfType<DataHolder>();
         LoadData(holder);
     }
 
@@ -44,8 +47,6 @@ public class UIManager : MonoBehaviour
             ChangePreviewBallTo(ball);
             break;
         }
-        if (models.Length == 0)
-            return;
         foreach (Material skin in skinsMats)
         {
             if (holder.selectedMaterialId != skin.GetInstanceID())
@@ -78,7 +79,7 @@ public class UIManager : MonoBehaviour
 
         if (name == CanvasName.Main.ToString())
         {
-            FindObjectOfType<DataHolder>().SaveData();
+            holder.SaveData();
             FindObjectOfType<CameraControl>().MoveCameraTo(0);
         }
         else if (name == CanvasName.Skins.ToString())
@@ -99,10 +100,7 @@ public class UIManager : MonoBehaviour
         }
     }
 
-    public void ChangeMusicVolume(Slider slider)
-    {
-        audioController.GetComponent<AudioSource>().volume = slider.value;
-    }
+    public void ChangeMusicVolume(Slider slider) => audioController.GetComponent<AudioSource>().volume = slider.value;
 
     public void ChangeSFXVolume(Slider slider)
     {
@@ -113,10 +111,7 @@ public class UIManager : MonoBehaviour
         manager.FixVolume(slider.value);
     }
 
-    public void ChangePreviewBallTo(Material material)
-    {
-        ball.material = material;
-    }
+    public void ChangePreviewBallTo(Material material) => ball.material = material;
 
     public void MarkButton(SkinButton button)
     {
@@ -132,18 +127,7 @@ public class UIManager : MonoBehaviour
         selectedBallButton = button;
     }
 
-    public void EndGame()
-    {
-        Application.Quit();
-    }
+    public void EndGame() => Application.Quit();
 
-    public void OpenSoundCloud()
-    {
-        Application.OpenURL("https://soundcloud.com/comabeatss");
-    }
-
-    public void OpenStore()
-    {
-        Debug.Log("Buying a Skin");
-    }
+    public void OpenSoundCloud() => Application.OpenURL("https://soundcloud.com/comabeatss");
 }

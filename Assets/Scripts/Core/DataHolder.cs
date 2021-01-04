@@ -1,5 +1,4 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class DataHolder : MonoBehaviour
 {
@@ -14,8 +13,6 @@ public class DataHolder : MonoBehaviour
     [Header("Settings")]
     public float musicVolume = 0;
     public float SFXVolume = 0;
-    [Header("All Skins")]
-    public int[] ownedSkinsID = null;
 
     private void Awake()
     {
@@ -61,26 +58,5 @@ public class DataHolder : MonoBehaviour
 
         musicVolume = data.musicVolume;
         SFXVolume = data.SFXVolume;
-    }
-
-    public void AddToOwnedSkins(int materialID) 
-    {
-        int[] list = new int[ownedSkinsID.Length + 1];
-        for (int i = 0; i < ownedSkinsID.Length; i++)
-        {
-            list[i] = ownedSkinsID[i];
-        }
-        list[list.Length - 1] = materialID;
-        ownedSkinsID = list;
-    }
-
-    public bool IsInList(int materialID)
-    {
-        foreach (int id in ownedSkinsID)
-        {
-            if (id == materialID)
-                return true;
-        }
-        return false;
     }
 }

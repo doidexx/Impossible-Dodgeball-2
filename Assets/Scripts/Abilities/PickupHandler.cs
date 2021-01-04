@@ -9,6 +9,8 @@ public class PickupHandler : MonoBehaviour
     public int pointsToSpawn = 100;
     public int pointIncreaseMinimum = 100;
     public int pointIncreaseMaximum = 400;
+    [Header("Test")]
+    public bool testing = false;
 
     private void Update()
     {
@@ -16,9 +18,13 @@ public class PickupHandler : MonoBehaviour
         {
             pointsToSpawn += (int)Random.Range(pointIncreaseMinimum, pointIncreaseMaximum);
             var pickupNumber = (int)Random.Range(0, pickups.Length);
-            //pickups[pickupNumber].gameObject.SetActive(true);
-            pickups[0].gameObject.SetActive(true);
-            pickups[1].gameObject.SetActive(true);
+            if (!testing)
+                pickups[pickupNumber].gameObject.SetActive(true);
+            else
+            {
+                pickups[0].gameObject.SetActive(true);
+                pickups[1].gameObject.SetActive(true);
+            }
         }
     }
 }

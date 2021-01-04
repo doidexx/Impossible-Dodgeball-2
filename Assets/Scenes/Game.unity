@@ -4514,7 +4514,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1101808007}
-  m_LocalRotation: {x: -0.011003753, y: 0.8527392, z: 0.017978765, w: 0.5219114}
+  m_LocalRotation: {x: -0.011003722, y: 0.8527392, z: 0.017978733, w: 0.52191144}
   m_LocalPosition: {x: -8.545437, y: 1.1451778, z: 4.366019}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
@@ -4621,6 +4621,7 @@ MonoBehaviour:
   pointsToSpawn: 100
   pointIncreaseMinimum: 100
   pointIncreaseMaximum: 300
+  testing: 0
 --- !u!1 &1110360295
 GameObject:
   m_ObjectHideFlags: 0
@@ -11302,7 +11303,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1783355410}
-  m_LocalRotation: {x: -0.011003753, y: 0.8527392, z: 0.017978765, w: 0.5219114}
+  m_LocalRotation: {x: -0.011003722, y: 0.8527392, z: 0.017978733, w: 0.52191144}
   m_LocalPosition: {x: -8.545437, y: 1.1451778, z: 4.366019}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -11439,7 +11440,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!65 &1805517598
 BoxCollider:
   m_ObjectHideFlags: 0

@@ -146,7 +146,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 77e57fd43071e6948af82f378f8f8497, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  timeForDoubleClick: 1
+  timeForDoubleClick: 0.4
   sprite: {fileID: 0}
   material: {fileID: 0}
   checkMark: {fileID: 5827552406973077506}

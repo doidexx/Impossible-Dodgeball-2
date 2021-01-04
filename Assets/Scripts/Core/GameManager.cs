@@ -16,7 +16,7 @@ public class GameManager : MonoBehaviour
     public ModelControl[] models = null;
     [Header("Audio Clips")]
     public AudioClip[] bounceSounds = null;
-    [Range(0,1)]
+    [Range(0, 1)]
     public float sneakerVolumeLimiter = 0.7f;
     [Header("Effects")]
     public ParticleSystem confeti = null;

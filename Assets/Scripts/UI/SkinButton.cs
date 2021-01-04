@@ -4,7 +4,7 @@ using UnityEngine.UI;
 public class SkinButton : MonoBehaviour
 {
     [Header("Settings")]
-    public float timeForDoubleClick = 1;
+    public float timeForDoubleClick = 0.4f;
     public Sprite sprite = null;
     public Material material = null;
     [Header("Images")]
@@ -12,38 +12,31 @@ public class SkinButton : MonoBehaviour
     public Image _lock = null;
     public ModelType modelType;
     [Header("Lock Settings")]
-    public bool unlocked = false;
-    public bool purchasable = false;
     public int scoreRequirement = 0;
     [TextArea(2, 2)]
     public string scoreRequirementText = "";
-    [TextArea(2, 2)]
-    public string buyableText = "";
 
     float timeSinceLastClick = Mathf.Infinity;
     UIManager uIManager = null;
-    DataHolder holder;
+    DataHolder holder = null;
 
     private void Awake()
     {
         GetComponent<Image>().sprite = sprite;
         uIManager = FindObjectOfType<UIManager>();
         holder = FindObjectOfType<DataHolder>();
-        CheckLastActiveSkin();
+    }
 
-        CheckUnlockable();
-        _lock.gameObject.SetActive(!unlocked);
+    private void Start()
+    {
+        CheckLastActiveSkin();
+        _lock.gameObject.SetActive(!IsUnlocked());
         scoreRequirementText += scoreRequirement;
     }
 
-    private void CheckUnlockable()
+    public bool IsUnlocked()
     {
-        unlocked = holder.IsInList(material.GetInstanceID());
-        var scoreReached = holder.highScore >= scoreRequirement;
-        if (unlocked || !scoreReached || purchasable)
-            return;
-        holder.AddToOwnedSkins(material.GetInstanceID());
-        unlocked = true;
+        return holder.highScore >= scoreRequirement;
     }
 
     private void CheckLastActiveSkin()
@@ -60,16 +53,13 @@ public class SkinButton : MonoBehaviour
         }
     }
 
-    private void Update()
-    {
-        timeSinceLastClick += Time.deltaTime;
-    }
+    private void Update() => timeSinceLastClick += Time.deltaTime;
 
     public void SelectSkin()
     {
         UpdateRequirementText();
         uIManager.ChangePreviewSkinTo(modelType, material);
-        if (unlocked == false)
+        if (IsUnlocked() == false)
             return;
         if (timeSinceLastClick < timeForDoubleClick)
             ApplySkin();
@@ -80,18 +70,14 @@ public class SkinButton : MonoBehaviour
     {
         UpdateRequirementText();
         uIManager.ChangePreviewBallTo(material);
-        if (unlocked == false)
+        if (IsUnlocked() == false)
             return;
         if (timeSinceLastClick < timeForDoubleClick)
             ApplyBallSkin();
         timeSinceLastClick = 0;
     }
 
-    private void UpdateRequirementText()
-    {
-        var text = (purchasable) ? buyableText : scoreRequirementText;
-        FindObjectOfType<RequirementDisplay>().UpdateRequirementText(!unlocked, purchasable, text);
-    }
+    private void UpdateRequirementText() => FindObjectOfType<RequirementDisplay>().UpdateRequirementText(!IsUnlocked(), scoreRequirementText);
 
     public void ApplySkin()
     {
@@ -108,15 +94,9 @@ public class SkinButton : MonoBehaviour
         uIManager.MarkBallButton(this);
     }
 
-    public void RemoveSelection()
-    {
-        checkMark.gameObject.SetActive(false);
-    }
+    public void RemoveSelection() => checkMark.gameObject.SetActive(false);
 
-    public void Mark()
-    {
-        checkMark.gameObject.SetActive(true);
-    }
+    public void Mark() => checkMark.gameObject.SetActive(true);
 }
 
 public enum ModelType
