@@ -128,6 +128,11 @@ PrefabInstance:
       propertyPath: material
       value: 
       objectReference: {fileID: 2100000, guid: f0469306fadfbdf4ca93653a14c1dfad, type: 2}
+    - target: {fileID: 4101586275041273610, guid: 176d6635c7a09b1488c9efac426b34a2,
+        type: 3}
+      propertyPath: scoreRequirement
+      value: 50
+      objectReference: {fileID: 0}
     - target: {fileID: 4101586275041273614, guid: 176d6635c7a09b1488c9efac426b34a2,
         type: 3}
       propertyPath: m_Name

@@ -12,6 +12,7 @@ public class NewUnlocksManager : MonoBehaviour
     UnlockedSkinsManager skinsManager = null;
     DataHolder holder = null;
     int lastIndexChecked = 0;
+    int lastIndexActivated = 0;
 
     private void Awake()
     {
@@ -24,9 +25,10 @@ public class NewUnlocksManager : MonoBehaviour
         CheckSkins();
         noNewsText.SetActive(content.childCount == 0);
         newUnlocksText.SetActive(content.childCount > 0);
+        EnableImage();
     }
 
-    public void CheckSkins() //Runs From animation Events after the first one
+    private void CheckSkins() //Runs From animation Events after the first one
     {
         for (int i = lastIndexChecked; i < skinButtons.Length; i++)
         {
@@ -34,7 +36,6 @@ public class NewUnlocksManager : MonoBehaviour
             if (skinsManager.AlreadyInList(skinButtons[i].material.GetInstanceID()) == true)
                 continue;
             AddToNewSkins(skinButtons[i]);
-            break;
         }
     }
 
@@ -46,5 +47,13 @@ public class NewUnlocksManager : MonoBehaviour
             image.sprite = button.sprite;
             skinsManager.AddToList(button.material.GetInstanceID());
         }
+    }
+
+    public void EnableImage()
+    {
+        if (content.childCount == 0 || lastIndexActivated == content.childCount)
+            return;
+        content.GetChild(lastIndexActivated).gameObject.SetActive(true);
+        lastIndexActivated++;
     }
 }

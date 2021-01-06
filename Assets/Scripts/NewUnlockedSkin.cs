@@ -11,6 +11,6 @@ public class NewUnlockedSkin : MonoBehaviour
 
     public void GetNextSkin()//Animation Event
     {
-        unlocksManager.CheckSkins();
+        unlocksManager.EnableImage();
     }
 }
