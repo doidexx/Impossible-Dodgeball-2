@@ -3,20 +3,47 @@ using UnityEngine.UI;
 
 public class ContentAdapt : MonoBehaviour
 {
-    int columns = 4;
-    float cellheight = 170;
-    float verticalSpacing = 35;
+    public bool vertical = true;
+
+    int constraintCount = 0;
+    float cellHeight = 0;
+    float cellWidth = 0;
+    float verticalSpacing = 0;
+    float horizontalSpacing = 0;
+
+    GridLayoutGroup gridLayout;
+    RectTransform rectTransform;
 
     private void Awake()
     {
-        var grid = GetComponent<GridLayoutGroup>();
-        var rt = GetComponent<RectTransform>();
+        gridLayout = GetComponent<GridLayoutGroup>();
+        rectTransform = GetComponent<RectTransform>();
+    }
 
-        columns = grid.constraintCount;
-        cellheight = grid.cellSize.y;
-        verticalSpacing = grid.spacing.y;
-        int rows = Mathf.CeilToInt((float)transform.childCount / columns);
+    private void Start()
+    {
+        constraintCount = gridLayout.constraintCount;
+        cellHeight = gridLayout.cellSize.y;
+        cellWidth = gridLayout.cellSize.x;
+        verticalSpacing = gridLayout.spacing.y;
+        horizontalSpacing = gridLayout.spacing.x;
+        if (vertical)
+            FixContentVertically();
+        else
+            FixContentHorizontally();
+    }
 
-        rt.sizeDelta = new Vector2(rt.sizeDelta.x, (rows * (cellheight + verticalSpacing)) - verticalSpacing);
+    private void FixContentHorizontally()
+    {
+        int columns = Mathf.CeilToInt((float)transform.childCount / constraintCount);
+        var newX = (columns * (cellWidth + horizontalSpacing)) + horizontalSpacing;
+        rectTransform.sizeDelta = new Vector2(newX, rectTransform.sizeDelta.y);
+    }
+
+    private void FixContentVertically()
+    {
+        int rows = Mathf.CeilToInt((float)transform.childCount / constraintCount);
+        var newY = (rows * (cellHeight + verticalSpacing)) + verticalSpacing;
+        rectTransform.sizeDelta = new Vector2(rectTransform.sizeDelta.x, newY);
     }
 }

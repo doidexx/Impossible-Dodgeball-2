@@ -38,7 +38,6 @@ public class Player : MonoBehaviour
 
     int timesJumped = 0;
     float verticalDirection = 0;
-    float horizontalDirection = 0;
     float highJumpTimer = Mathf.Infinity;
     float highSpeedTimer = Mathf.Infinity;
 
@@ -83,34 +82,46 @@ public class Player : MonoBehaviour
 
     private void ProcessInput()
     {
-        if (playerMovementLocked == false && isGrounded == true && playerState != PlayerState.Down)
+        if (playerMovementLocked == true || playerState == PlayerState.Down)
+            return;
+        if (isGrounded == true)
         {
             timesJumped = 0;
-            if (highSpeed == false)
-                horizontalDirection = joystick.Horizontal * movementSpeed;
-            else
-                horizontalDirection = joystick.Horizontal * movementSpeed * highSpeedMultiplier;
-
-
-            var dir = direction;
-            direction = Mathf.Clamp((int)horizontalDirection, -1, 1);
-            if (dir != direction)
-                PlaySneakerSound();
-
-            if (Input.GetButtonDown("Jump")) // This is only for keyboard functionality
-            {
-                if (Input.GetKey(KeyCode.LeftShift))
-                    UITwistJump();
-                else
-                    UIJump();
-            }
+            CheckDirectionChanges();
+            ProcessKeyboardInput();
         }
         else
         {
             verticalDirection += Physics.gravity.y * gravityModifier * Time.deltaTime;
         }
-        Vector3 movementDirection = new Vector3(horizontalDirection, verticalDirection, 0);
+        Vector3 movementDirection = new Vector3(GetHorizontalSpeed(), verticalDirection, 0);
         rb.velocity = movementDirection;
+    }
+
+    private void ProcessKeyboardInput()
+    {
+        if (Input.GetButtonDown("Jump"))
+        {
+            if (Input.GetKey(KeyCode.LeftShift))
+                UITwistJump();
+            else
+                UIJump();
+        }
+    }
+
+    private float GetHorizontalSpeed()
+    {
+        if (highSpeed == false)
+            return joystick.Horizontal * movementSpeed;
+        return joystick.Horizontal * movementSpeed * highSpeedMultiplier;
+    }
+
+    private void CheckDirectionChanges()
+    {
+        var dir = direction;
+        direction = Mathf.Clamp((int)GetHorizontalSpeed(), -1, 1);
+        if (dir != direction)
+            PlaySneakerSound();
     }
 
     private void Jump()
@@ -239,8 +250,10 @@ public class Player : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.tag == "Floor")
-            PlaySneakerSound();
+        if (other.tag != "Floor")
+            return;
+        PlaySneakerSound();
+        verticalDirection = 0;
     }
 
     private void OnTriggerExit(Collider other)

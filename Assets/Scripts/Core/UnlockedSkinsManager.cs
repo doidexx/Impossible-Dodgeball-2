@@ -47,12 +47,12 @@ public class UnlockedSkinsManager : MonoBehaviour
 
     public void AddToList(int id)
     {
-        if (SkinInList(id) == true)
+        if (AlreadyInList(id) == true)
             return;
         unlockedSkinsIDs.Add(id);
     }
 
-    private bool SkinInList(int id)
+    public bool AlreadyInList(int id)
     {
         foreach (var skinID in unlockedSkinsIDs)
         {
