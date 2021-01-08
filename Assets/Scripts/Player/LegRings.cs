@@ -28,6 +28,9 @@ public class LegRings : MonoBehaviour
     {
         for (int i = 0; i < rings.Length; i++)
         {
+            var animator = rings[i].GetComponent<Animator>();
+            if (animator.isActiveAndEnabled == false)
+                return;
             rings[i].GetComponent<Animator>().SetBool("Ending", true);
         }
     }
