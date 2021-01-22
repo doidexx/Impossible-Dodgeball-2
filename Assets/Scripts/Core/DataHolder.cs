@@ -13,6 +13,8 @@ public class DataHolder : MonoBehaviour
     [Header("Settings")]
     public float musicVolume = 0;
     public float SFXVolume = 0;
+    [Header("Other")]
+    public int matchesSinceLastAd = 0;
 
     private void Awake()
     {
